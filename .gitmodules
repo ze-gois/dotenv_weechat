@@ -1,0 +1,3 @@
+[submodule "matrix-rs"]
+	path = matrix-rs
+	url = git@github.com:poljar/weechat-matrix-rs
