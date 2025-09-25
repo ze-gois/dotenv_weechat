@@ -1,0 +1,1656 @@
+![WeeChat Screenshot](https://gist.github.com/assets/3608314/af48ff52-ecb6-4614-9171-52aeda95bebc)
+
+## Mouse
+
+***
+
+### enable
+
+***
+
+    /mouse enable
+
+---
+---
+
+## Network
+
+***
+
+### default
+
+Dependencies:
+
+- Plugins: irc
+- Secures: defaultsasluser, defaultnicks
+<!-- ending list -->
+
+
+***
+
+    /set irc.server_default.sasl_mechanism PLAIN
+    /set irc.server_default.sasl_username ${sec.data.defaultsasluser}
+    /set irc.server_default.nicks ${sec.data.defaultnicks}
+    /set irc.server_default.capabilities "*"
+    /set irc.server_default.autojoin_dynamic on
+
+___
+
+
+***
+
+### specific
+
+Dependencies:
+
+- Plugins: irc
+- Secures: liberachatpass
+<!-- ending list -->
+
+***
+
+    /server add libera irc.libera.chat/6697 -autoconnect
+    /set irc.server.libera.sasl_password ${sec.data.liberachatpass}
+    
+    /server add oftc irc.oftc.net/6697 -autoconnect
+    /set irc.server.oftc.tls_cert "%h/tls/nick.pem"
+    /set irc.server.oftc.command_delay 5
+
+    /connect -auto
+
+---
+---
+
+## Plugins
+
+***
+
+### irc
+
+Dependencies:
+
+- Plugins: irc
+<!-- ending list -->
+
+***
+
+    /set irc.server_default.away_check 5
+    /set irc.server_default.away_check_max_nicks 25
+    /set irc.color.nick_prefixes "q:lightred;a:lightcyan;o:121;h:lightmagenta;v:229;*:lightblue"
+    /set irc.network.ban_mask_default "*!*@$host"
+    /set irc.look.buffer_switch_autojoin off
+    /set irc.look.buffer_switch_join off
+    /set irc.look.color_nicks_in_nicklist on
+    /set irc.look.part_closes_buffer on
+    /set irc.look.server_buffer independent
+    /set irc.color.mirc_remap "1,-1:16;14,-1:240"
+    /set irc.color.message_join 121
+    /set irc.color.message_quit 131
+
+___
+
+***
+
+### spell
+
+Dependencies:
+
+- Plugins: spell
+<!-- ending list -->
+
+***
+
+    /set spell.check.default_dict en,fr
+    /set spell.check.suggestions 3
+    /set spell.color.suggestion *green
+    /spell enable
+
+___
+
+***
+
+### logger
+
+Dependencies:
+
+- Plugins: logger
+<!-- ending list -->
+
+***
+
+    /set logger.level.irc 4
+    /set logger.mask.irc %Y/$server/$channel.%m-%d.log
+
+___
+
+***
+
+### fset
+
+Dependencies:
+
+- WeeChat: 3.0
+- Plugins: fset
+<!-- ending list -->
+
+***
+
+    /set fset.color.line_selected_bg1 default
+    /set fset.color.name_changed 229
+    /set fset.color.name_changed_selected *229
+    /set fset.color.type 121
+    /set fset.color.type_selected *121
+    /set fset.color.value 31
+    /set fset.color.value_changed 229
+    /set fset.color.value_changed_selected *229
+    /set fset.color.value_selected *31
+    /set fset.look.auto_refresh "*,!weechat.bar.buflist.size,!plugins.var.group_tools.buflist_main.section.*,!plugins.var.group_tools.sys_usage.item.sys_usage.encoded"
+    /set fset.format.option1 "${if:${selected_line}?${color:*white}>>:  } ${marked} ${name}  ${type}  ${value2}"
+    /set weechat.bar.fset.conditions "${buffer.full_name} == fset.fset && ${window.win_height} > 7"  
+
+___
+
+***
+
+### relay
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: relay
+- Secures: relaypass
+<!-- ending list -->
+
+***
+
+    /relay tlscertkey
+    /relay addreplace tls.weechat <port>
+    /set relay.network.password "${sec.data.relaypass}"
+
+---
+---
+
+## Scripts
+
+***
+
+### autosort
+
+Dependencies:
+
+- Plugins: python, script
+- Scripts: autosort.py
+<!-- ending list -->
+
+***
+
+    /autosort helpers set monitors_buffers_first ${if:${buffer.full_name}!~^core\.(chan|high|news)mon$}
+    /autosort rules insert 3 ${monitors_buffers_first}
+
+___
+
+***
+
+### cmd_help
+
+Dependencies:
+
+- Plugins: python, script
+- Scripts: cmd_help.py
+<!-- ending list -->
+
+***
+
+    /set plugins.var.python.cmd_help.color_delimiters "*white"
+    /set plugins.var.python.cmd_help.color_arguments "121"
+    /set plugins.var.python.cmd_help.color_list "121"
+    /set plugins.var.python.cmd_help.start_on_load "on"
+    /set plugins.var.python.cmd_help.stop_on_enter "off"
+    /cmd_help
+
+---
+---
+
+## Triggers
+
+***
+
+### utils_group_tools
+
+Dependencies:
+
+- WeeChat: 3.4
+- Plugins: trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace utils_group_tools command "group_tools;manage the options of one or more groups;set <grp>,[<grp>...] <ns>,[<ns>...] <sec>,[<sec>...] <prop>,[<prop>...] <val> || add <grp>,[<grp>...] <ns>,[<ns>...] <sec>,[<sec>...] ${\x22}<prop>${\x22} ${\x22}<val>${\x22} [${\x22}<prop>${\x22} ${\x22}<val>${\x22}...]; set: set the same value for one or more options${\n} add: set the same or differents values for one or more options${\n} grp: a group${\n}  ns: a namespace${\n} sec: a section${\n}prop: a property${\n} val: a value${\n}${\n}Set the values of 6 options:${\n}${\n}   /group_tools add chanmon segment nick min ${\x22}5${\x22} max ${\x22}5${\x22} fg ${\x22}white${\x22} bg ${\x22}24${\x22} sep ${\x22}black${\x22} content ${\x22}${raw:${tg_tag_nick}}${\x22}${\n}${\n}Which result in creating or updating the following options:${\n}${\n}   ${define:my_opt_prefix,plugins.var.group_tools.chanmon.segment.nick}${my_opt_prefix}.min${\n}   ${my_opt_prefix}.max${\n}   ${my_opt_prefix}.fg${\n}   ${my_opt_prefix}.bg${\n}   ${my_opt_prefix}.sep${\n}   ${my_opt_prefix}.content${\n}${\n}Change the value of min and max to 7:${\n}${\n}   /group_tools set chanmon segment nick min,max 7;set|add"
+    /trigger set utils_group_tools conditions "${define:my_regex,[abcdefghijklmnopqrstuvwxyz0-9_]+}${tg_argv_eol1} =~ (?-i)^set +(${my_regex},?)+ +(${my_regex},?)+ +(${my_regex},?)+ +(${my_regex},?)+ . || ${tg_argv_eol1} =~ (?-i)^add +(${my_regex},?)+ +(${my_regex},?)+ +(${my_regex},?)+ . && ${tg_shell_argv5} =~ ^${my_regex}$"
+    /trigger set utils_group_tools regex "/.*/[abcdefghijklmnopqrstuvwxyz0-9_]+/my_regex /.*/${tg_argv1}/my_action /.*/${tg_argv2}/my_groups /[^,]$/${re:0},/my_groups /.*/${tg_argv3}/my_namespaces /[^,]$/${re:0},/my_namespaces /.*/${tg_argv4}/my_sections /[^,]$/${re:0},/my_sections /.*/${if:${my_action}==set?${tg_argv5}}/my_set_properties /.*/${if:${my_action}==add?${repeat:${calc:${tg_shell_argc}-5},,}}/my_add_properties /,/${define:my_argv_number,${calc:${re:repl_index}+4}}${if:${re:repl_index}=~[13579]$&&${tg_shell_argv${my_argv_number}}=~^${my_regex}$?${my_argv_number},}/my_add_properties /.*/${my_${my_action}_properties}/my_properties /[^,]$/${re:0},/my_properties /.*/${split:count,,strip_right,${my_groups}}/my_nb_of_groups /.*/${split:count,,strip_right,${my_namespaces}}/my_nb_of_namespaces /.*/${split:count,,strip_right,${my_sections}}/my_nb_of_sections /.*/${split:count,,strip_right,${my_properties}}/my_nb_of_properties /[^,]+,/${repeat:${calc:${my_nb_of_namespaces}*${my_nb_of_sections}*${my_nb_of_properties}},${re:0}}/my_groups /[^,]+,/${repeat:${calc:${my_nb_of_sections}*${my_nb_of_properties}},${re:0}}/my_namespaces /.*/${repeat:${my_nb_of_groups},${re:0}}/my_namespaces /[^,]+,/${repeat:${my_nb_of_properties},${re:0}}/my_sections /.*/${repeat:${calc:${my_nb_of_groups}*${my_nb_of_namespaces}},${re:0}}/my_sections /.*/${repeat:${calc:${my_nb_of_groups}*${my_nb_of_namespaces}*${my_nb_of_sections}},${re:0}}/my_properties /.*/${my_properties}/my_cmds_to_run ===([^,]+),===${define:my_group,${split:${re:repl_index},,,${my_groups}}}${define:my_namespace,${split:${re:repl_index},,,${my_namespaces}}}${define:my_section,${split:${re:repl_index},,,${my_sections}}}${define:my_property,${if:${my_action}==set?${re:1}:${tg_shell_argv${re:1}}}}${define:my_value,${if:${my_action}==set?${tg_argv_eol6}:${tg_shell_argv${calc:${re:1}+1}}}}${define:my_quote,${if:${my_action}==add?'}}/mute -core /set plugins.var.group_tools.${my_group}.${my_namespace}.${my_section}.${my_property} ${my_quote}\${base_decode:16,${base_encode:16,${my_value}}}${my_quote};===my_cmds_to_run"
+    /trigger set utils_group_tools command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+this trigger create the group_tools command which is used throughout this configuration. It allows us to create many options easily.
+
+___
+
+***
+
+### utils_search_server_buffer_ptr
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace utils_search_server_buffer_ptr info "search_server_buffer_ptr"
+    /trigger set utils_search_server_buffer_ptr conditions "${tg_arguments} != && (${buffer[${tg_arguments}].local_variables.script_name} =~ ^(matrix|slack)$ || ${buffer[${tg_arguments}].local_variables.plugin} =~ ^(irc|matrix))$"
+    /trigger set utils_search_server_buffer_ptr regex "/.*/${buffer[${tg_arguments}].local_variables.plugin}/my_plugin /.*/${buffer[${tg_arguments}].local_variables.script_name}/my_script /.*/${buffer[${tg_arguments}].local_variables.server}/my_server /.*/${info:script_info,slack.py,version}/my_slack_version /.*/${info:buffer,${my_plugin}.${if:${my_script}==slack?${if:${split:1,.,,${my_slack_version}}<3?:slack.server.}:server.}${my_server}}/tg_info"
+
+This trigger create an info named search_server_buffer_ptr which receive a buffer pointer and return the buffer pointer of the corresponding server (works with IRC, Slack and matrix)
+
+___
+
+***
+
+### utils_base_csv
+
+Dependencies:
+
+- Plugins: trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace utils_base_csv info "base_encode_csv;base_decode_csv"
+    /trigger set utils_base_csv conditions "${tg_arguments} =~ ^(16|32|64),[^,]"
+    /trigger set utils_base_csv regex "/.*/${split:2,_,,${tg_info_name}}/my_action /.*/${split:1,,,${tg_arguments}}/my_base /.*/${split:2,,keep_eol,${tg_arguments}}/tg_info /[^,]+/${base_${my_action}:${my_base},${re:0}}/tg_info"
+
+___
+
+***
+
+### utils_rot13
+
+Dependencies:
+
+- Plugins: trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace utils_rot13 info "rot13"
+    /trigger set utils_rot13 regex "/.*/a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,a,b,c,d,e,f,g,h,i,j,k,l,m/my_lowercase /.*/${my_lowercase}/my_uppercase /[^,]/${upper:${re:0}}/my_uppercase /.*/${tg_arguments}/tg_info /./${if:${re:0}!~[${chars:alpha}]?${re:0}:${define:my_case,${if:${re:0}==${upper:${re:0}}?upper:lower}}${split:${calc:${length:${chars:a-${lower:${re:0}}}}+13},,,${my_${my_case}case}}}/tg_info"
+
+This trigger transform text using rot13
+
+___
+
+### utils_rot13_csv
+
+Dependencies:
+
+- Plugins: trigger
+- Triggers: utils_rot13
+<!-- ending list -->
+
+***
+
+    /trigger addreplace utils_rot13_csv info "rot13_csv"
+    /trigger set utils_rot13_csv regex "/.*/${tg_arguments}/tg_info /[^,]+/${info:rot13,${re:0}}/tg_info"
+
+This trigger transform CSV using rot13
+
+___
+
+***
+
+### utils_date_calc_days
+
+Dependencies:
+
+- Plugins: python, trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace utils_date_calc_days info "date_calc_days"
+    /trigger set utils_date_calc_days conditions "${tg_arguments} =~ ^[0-9]{4}-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])$ && ${info:python_version} !="
+    /trigger set utils_date_calc_days regex "/.*/${info:python_eval,from datetime import datetime; date1 = datetime.today(); date2 = datetime.strptime('${tg_arguments}', '%Y-%m-%d'); delta = date1 - date2; print(abs(delta.days))}/tg_info"
+
+Calculate the number of days between two dates. For the time being, only used by dev_info
+
+___
+
+***
+
+### utils_date_preferred
+
+Dependencies:
+
+- Plugins: python, trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace utils_date_preferred info "date_preferred"
+    /trigger set utils_date_preferred conditions "${tg_arguments} =~ ^[0-9]{4}-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])$ && ${info:python_version} !="
+    /trigger set utils_date_preferred regex "/.*/${info:python_eval,from datetime import datetime; print(datetime.strptime('${tg_arguments}', '%Y-%m-%d').strftime('%x'))}/tg_info"
+
+transform a date to local representation. For the time being, only used by dev_info
+
+---
+---
+
+## Buflist
+
+***
+
+### old_buflist_cleanup
+
+    /unset -mask buflist.*
+    /unset -mask plugins.var.group_tools.buflist_*
+    /bar del buflist_*
+    /trigger del buflist_*
+    /key unbindctxt cursor @item(buflist*):f
+    /key unbindctxt cursor @item(buflist*):r
+    /key unbindctxt cursor @item(buflist*):o
+    /key unbindctxt cursor @item(buflist*):n
+    /key unbindctxt cursor @item(buflist*):h
+    /key unbindctxt cursor @item(buflist*):H
+    /key unbindctxt cursor @item(buflist*):1
+    /key unbindctxt cursor @item(buflist*):2
+    /key unbindctxt cursor @item(buflist*):3
+
+Run this to remove any trace of the previous version of the buflist
+
+___
+
+***
+
+### buflist
+
+![WeeChat Screenshot](https://gist.github.com/assets/3608314/b82f64c3-7a29-44f3-8d6a-f00c45f5783d)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: buflist, trigger
+- Triggers: utils_search_server_buffer_ptr
+<!-- ending list -->
+
+***
+
+    /trigger addreplace buflist_tools command "buflist_tools;manage the buflist (https://gist.github.com/pascalpoitras/8406501);resize <left_size> <right_size> || hide|show|etoggle|showonly|hideonly <element> [<element>...] || enable|disable|toggle <feature> [<feature>...];      resize: resize the buflist size and the two sections${\n}        hide: hide one or more element(s)${\n}        show: show one or more element(s)${\n}     etoggle: toggle one or more element(s)${\n}   show-only: hide all elements except...${\n}   hide-only: show all elements except...${\n}      enable: enable a feature that change the behavior of the buflist${\n}     disable: disable a feature that change the behavior of the buflist${\n}      toggle: toggle a feature that change the behavior of the buflist${\n} enable-only: disable all features except...${\n}disable-only: enable all features except...${\n}   left_size: size of left section${\n}  right_size: size of right section${\n}     element: an element (* for all)${\n}     feature: a feature (* for all)${\n}${\n}${color:bold}${color:underline}Sections${color:-bold}${color:-underline}${\n}${\n} There are two sections:${\n}${\n}  - The ${color:bold}left${color:-bold} section contains the following elements: ${color:bold}number${color:-bold}, ${color:bold}fold${color:-bold}, ${color:bold}indent${color:-bold}, ${color:bold}nick_prefix${color:-bold}, ${color:bold}name${color:-bold}, ${color:bold}lag${color:-bold} and ${color:bold}filter${color:-bold}${\n}  - The ${color:bold}right${color:-bold} section contains the following element: ${color:bold}hotlist${color:-bold}.${\n}${\n} Example:${\n}${\n}   Resize the sections:${\n}${\n}     /buflist_tools resize 15 5${\n}${\n}${color:bold}${color:underline}Elements${color:reset}${\n}${\n} There are height elements:${\n}${\n}  - The ${color:bold}number${color:-bold} element is used to display the buffer number on all buffers.${\n}  - The ${color:bold}fold${color:-bold} element is used to display an arrow on servers buffers which, when click, shows or hides the channels, queries and list buffers of that server.${\n}  - The ${color:bold}indent${color:-bold} element is used to display indentation on channels, queries and lists buffers.${\n}  - The ${color:bold}nick_prefix${color:-bold} element is used to display your nick prefix on channels buffers.${\n}  - The ${color:bold}name${color:-bold} element is used to display the buffer name on all buffers.${\n}  - The ${color:bold}lag${color:-bold} element is used to display the lag on servers buffers.${\n}  - The ${color:bold}filter${color:-bold} element is used to display the content of the filter localvar on buffer with that localvar set (the monitor, fset, script, irc raw buffer and others).${\n}  - The ${color:bold}hotlist${color:-bold} element is used to display the hotlist on all buffers.${\n}${\n} Example:${\n}${\n}   Display every element except nick_prefix and lag:${\n}${\n}     /buflist_tools hideonly nick_prefix lag${\n}${\n}${color:bold}${color:underline}Features${color:reset}${\n}${\n} There are three features:${\n}${\n}  - The ${color:bold}indent_tree${color:-bold} feature is used when you prefer to have symbols instead of spaces as indentation.${\n}  - The ${color:bold}real_net_name${color:-bold} feature is used when you prefer to see the real network name instead of the server name you provided to /server add${\n}  - The ${color:bold}show_hidden_buffers${color:-bold} feature is used when you want to show the hidden buffers${\n}${\n} Example:${\n}${\n}   Enable the indent_tree and real_net_name features${\n}${\n}     /buflist_tools enable indent_tree real_net_name;resize 15 5 || show|hide|etoggle|hideonly|showonly number|fold|indent|nick_prefix|name|lag|filter|hotlist|*|%* || enable|disable|toggle indent_tree|real_net_name|show_hidden_buffers|*|%*"
+    /trigger set buflist_tools conditions "${tg_argv_eol1} =~ ^resize +[0-9]+ +[0-9]+$ || ${tg_argv_eol1} =~ ^(hide|show|etoggle|show-only|hide-only|enable|enable-only|disable|disable-only|toggle) +(([abcdefghijklmnopqrstuvwxyz0-9_]+ *)+|\*)$"
+    /trigger set buflist_tools regex "/.*/${tg_argv1}/my_action /.*/${if:${my_action}==resize?section:${if:${my_action}=~^(enable|disable|toggle)?feature:element}}/my_type /.*/plugins.var.group_tools.buflist.${my_type}/my_opt_prefix ===.*===${if:${my_action}==resize?/mute -core /set ${my_opt_prefix}.left.size ${tg_argv2};/mute -core /set ${my_opt_prefix}.right.size ${tg_argv3};/bar set buflist size ${calc:${tg_argv2}+${tg_argv3}}}===my_resize_cmds /.*/${if:${my_type}==feature?indent_tree real_net_name show_hidden_buffers:${if:${my_type}==element?number fold indent nick_prefix name lag filter hotlist}}/my_whole_list /.*/${if:${my_type}=~^(feature|element)?${tg_argv_eol2}}/my_features_elements_cmds2 /\*/${my_whole_list}/my_features_elements_cmds2 /.*/${if:${my_action}=~-only$?${my_whole_list}}/my_features_elements_cmds1 ===([^ ]+) ?===/mute -core /set ${my_opt_prefix}.${re:1}.enabled ${if:${my_action}=~^(disable|hide)-only$};===my_features_elements_cmds1 ===([^ ]+) ?===/mute -core /set ${my_opt_prefix}.${re:1}.enabled ${if:${my_action}=~^(disable|hide)?0:${if:${my_action}=~^(enable|show)?1:${if:${${my_opt_prefix}.${re:1}.enabled}!=?0:1}}};===my_features_elements_cmds2 /.*/${my_resize_cmds}${my_features_elements_cmds1}${my_features_elements_cmds2}/my_cmds_to_run"
+    /trigger set buflist_tools command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+This trigger create the command buflist_tools. With this command, you can resize the buflist in addition to enabling/disabling elements and features
+
+    /trigger addreplace buflist_refresh config "plugins.var.group_tools.buflist.*" "" "" "/buflist refresh buflist"
+
+This trigger refresh the buflist when a buflist option is modified
+
+    /trigger addreplace buflist_is_next_visible_buffer_part_of_same_server_as info "buflist_is_next_visible_buffer_part_of_same_server_as"
+    /trigger set buflist_is_next_visible_buffer_part_of_same_server_as conditions "${info:buffer,${tg_arguments}} !="
+    /trigger set buflist_is_next_visible_buffer_part_of_same_server_as regex "/.*/${info:buffer,${tg_arguments}}/my_matching_buffer /.*/${buffer[${my_matching_buffer}].local_variables.server}/my_server /.*/${repeat:${calc:${hdata_count:buffer[${info:buffer,${tg_arguments}}]}-1},,}/my_list /,/${define:my_buffer,${buffer[${info:buffer,${tg_arguments}}]${repeat:${re:repl_index},.next_buffer}}}${if:(${plugins.var.group_tools.buflist.feature.show_hidden_buffers.enabled}!=||${buffer[${my_buffer}].hidden}==)&&(${buffer[${my_buffer}].local_variables.type}!~^(channel|list|private)$||${buffer[${my_buffer}].local_variables.type}=~^(channel|list|private)$&&${buffer[${info:search_server_buffer_ptr,${my_buffer}}].local_variables.chat_list_fold}==)?${if:${buffer[${my_buffer}].local_variables.server}==${my_server}&&${buffer[${my_buffer}].local_variables.type}!=server?1:0}}/my_list /.*/${if:${my_list}=~^1?1:0}/tg_info"
+
+this trigger return 1 if the first visible buffer after the current one is a channel, list or private that belong to the same server as the current one
+
+    /trigger addreplace buflist_resize hsignal "buflist_resize"
+    /trigger set buflist_resize conditions "${_key}=~down || ${_key}=~up && (${_bar_item_col} < ${plugins.var.group_tools.buflist.section.left.size} && ${plugins.var.group_tools.buflist.section.left.size} > 1 || ${_bar_item_col} >= ${plugins.var.group_tools.buflist.section.left.size} && ${plugins.var.group_tools.buflist.section.right.size} > 1)"
+    /trigger set buflist_resize regex "/.*/${if:${_key}=~up$?-:+}/my_action /.*/${if:${_bar_item_col}<${plugins.var.group_tools.buflist.section.left.size}?left:right}/my_modified_section /.*/${calc:${plugins.var.group_tools.buflist.section.${my_modified_section}.size} ${my_action} 1}/my_modified_section_size /.*/${if:${weechat.bar.${_bar_name}.size}!=?${calc:${weechat.bar.${_bar_name}.size} ${my_action} 1}:0}/my_new_bar_size"
+    /trigger set buflist_resize command "/mute /set plugins.var.group_tools.buflist.section.${my_modified_section}.size ${my_modified_section_size};/bar set ${_bar_name} size ${my_new_bar_size}"
+
+this trigger create the hsignal used to resize the buflist with the mouse
+
+    /trigger addreplace buflist_fold hsignal "1001|buflist_mouse"
+    /trigger set buflist_fold conditions "${localvar_type} == server && ${plugins.var.group_tools.buflist.element.fold.enabled} != && (${plugins.var.group_tools.buflist.element.number.enabled} != && ${_bar_item_col} == ${lengthscr:${buffer[last_gui_buffer].number}.} || ${plugins.var.group_tools.buflist.element.number.enabled} == && ${_bar_item_col} == 0)"
+    /trigger set buflist_fold command "/mute /toggle weechat.buffer.${full_name}.localvar_set_buflist_fold 1 ''"
+    /trigger set buflist_fold return_code "ok_eat"
+
+this trigger create the hsignal used to fold the buflist with the mouse
+
+    /key bindctxt cursor @item(buflist):f /mute /toggle weechat.buffer.${plugin}.${if:${plugin}==irc||${buffer[${pointer}].local_variables.script_name}==matrix||${plugin}==matrix?server.}${localvar_server}.localvar_set_buflist_fold 1 '';/cursor stop
+    /key bindctxt cursor @item(buflist):r /server raw c:\${${if:${localvar_type}==private?nick:${localvar_type}}}==${localvar_channel};/cursor stop
+    /key bindctxt cursor @item(buflist):o /fset c:\${name}=*weechat.buffer.${full_name}.* ${if:${localvar_type}==server?|| \${name${\x7D}=*${full_name}.*};/cursor stop
+    /key bindctxt cursor @item(buflist):n /mute /toggle weechat.buffer.${full_name}.localvar_set_no_chanmon_like 1 '';/cursor stop
+    /key bindctxt cursor @item(buflist):h /mute /toggle weechat.buffer.${full_name}.hidden 1 '';/cursor stop
+    /key bindctxt cursor @item(buflist):H /buflist_tools toggle show_hidden_buffers;/cursor stop
+    /repeat 9 /key bindctxt cursor @item(buflist):${repeat_index} /favorite_buffer toggle ${raw:${_key} ${full_name}};/cursor stop
+    /key bindctxt mouse @bar(buflist):ctrl-alt-wheel* /mute /set weechat.buffer.${full_name}.localvar_set_buflist_start_at ${define:my_start_at,${buffer[${pointer}].local_variables.buflist_start_at}}${if:${_key}=~-wheelup$&&${my_start_at}==?0:${calc:${my_start_at}${if:${_key}=~up&&${my_start_at}!=?-:+}1}}
+    /key bindctxt mouse @bar(buflist):alt-wheel* hsignal:buflist_resize
+    /key bindctxt mouse @item(buflist):ctrl-button1-gesture-* /favorite_buffer toggle ${_window_number2} ${full_name}
+
+1. Pressing 'f' in cursor mode on the buflist item will toggle the folding of the server to which the buffer under the cursor belong
+2. Pressing 'r' in cursor mode on the buflist item will show the entries for the buffer under the cursor in the /server raw buffer
+3. Pressing 'o' in cursor mode on the buflist item will show the options for the buffer under the cursor in /fset
+4. Pressing 'n' in cursor mode on the buflist item will toggle the no_chanmon_like localvar of the buffer under the cursor
+5. Pressing 'h' in cursor mode on the buflist item will toggle the hidden property of the buffer under the cursor
+6. Pressing 'H' in cursor mode on the buflist item will toggle the view of the hidden buffers in the main buflist
+7. Pressing a digit in cursor mode on the buflist item will toggle the buffer in the favorite_buffer group with the same digit
+8. Pressing 'ctrl-alt-wheelup' and 'ctrl-alt-wheeldown' on the buflist bar will scroll the buffer name of the buffer under the mouse
+9. Pressing 'alt-wheelup' and 'alt-wheeldown' on the buflist bar will resize the bar
+
+<!-- ending list -->
+
+    /bar set buflist priority 2000
+
+Change the priority of the buflist bar
+
+    /set buflist.look.use_items 1
+    /set buflist.look.sort number
+    /set buflist.look.signals_refresh "irc_server_connected"
+    /set buflist.look.display_conditions "(${buffer.hidden} == || ${plugins.var.group_tools.buflist.feature.show_hidden_buffers.enabled} !=) && (${type} !~ ^(channel|list|private)$ || ${type} =~ ^(channel|list|private)$ && ${buffer[${info:search_server_buffer_ptr,${buffer}}].local_variables.buflist_fold}==)"
+
+Use only one buflist item, sort by buffer number, add an additional signal to the list of signals that cause the buflist to be refresh and finally the condition for a buffer to be included in the buflist
+
+    /set buflist.format.buffer "${define:my_left_section_contents,${format_number}${eval:${plugins.var.group_tools.buflist.element.fold.format}}${indent}${format_nick_prefix}${format_name}${format_lag}${eval:${plugins.var.group_tools.buflist.element.filter.format}}}${define:my_left_section_contents_length,${lengthscr:${my_left_section_contents}}}${define:my_right_section_contents,${format_hotlist}}${define:my_right_section_contents_length,${lengthscr:${my_right_section_contents}}}${if:${type}==server?${color:,24}:${color:default}}${if:${my_left_section_contents_length} > ${plugins.var.group_tools.buflist.section.left.size}?${cutscr:+${plugins.var.group_tools.buflist.section.left.size},${if:${type}==server?${color:white}:${color:${weechat.color.chat_prefix_more}}}${weechat.look.prefix_align_more},${my_left_section_contents}}:${my_left_section_contents}${repeat:${calc:${plugins.var.group_tools.buflist.section.left.size} - ${my_left_section_contents_length}}, }}${if:${my_right_section_contents_length} > ${plugins.var.group_tools.buflist.section.right.size}?${cutscr:+${plugins.var.group_tools.buflist.section.right.size},${if:${type}==server?${color:white}:${color:${weechat.color.chat_prefix_more}}}${weechat.look.prefix_align_more},${my_right_section_contents}}:${repeat:${calc:${plugins.var.group_tools.buflist.section.right.size} - ${my_right_section_contents_length}}, }${my_right_section_contents}}"
+    /set buflist.format.buffer_current "${format_buffer}"
+    /set buflist.format.hotlist_highlight "${color:163}"
+    /set buflist.format.hotlist_message "${color:229}"
+    /set buflist.format.hotlist_private "${color:121}"
+    /set buflist.format.number "${if:${plugins.var.group_tools.buflist.element.number.enabled}!=?${if:${current_buffer}!=?${color:*white}${hide:>,${number}} :${if:${type}==server?${color:*white}}${number} }}"
+    /set buflist.format.indent "${if:${plugins.var.group_tools.buflist.element.indent.enabled}!=?${if:${plugins.var.group_tools.buflist.feature.indent_tree.enabled}!=?${color:24}${if:${buffer.next_buffer}==0x0?┗:${if:(${buffer.next_buffer.hidden}==||${plugins.var.group_tools.buflist.feature.show_hidden_buffers.enabled}!=)&&(${buffer.next_buffer.local_variables.type}!~^(channel|list|private)$||${buffer.next_buffer.local_variables.type}=~^(channel|list|private)$&&${buffer[${info:search_server_buffer_ptr,${buffer.next_buffer}}].local_variables.buflist_fold}==)?${if:${buffer.next_buffer.local_variables.server}==${server}&&${buffer.next_buffer.local_variables.type}!=server?┣:┗}:${if:${info:buflist_is_next_visible_buffer_part_of_same_server_as,${buffer.full_name}}!=?┣:┗}}}━:  }}"
+    /set buflist.format.name "${if:${plugins.var.group_tools.buflist.element.name.enabled}!=?${define:my_name,${if:${type}==server?${if:${plugins.var.group_tools.buflist.feature.real_net_name.enabled}!=&&${info:irc_server_isupport_value,${name},NETWORK}!=?${info:irc_server_isupport_value,${name},NETWORK}:${name}}:${name}}}${define:my_name_length,${lengthscr:${my_name}}}${define:my_name,${if:${buffer.local_variables.buflist_start_at}!=?${revscr:${cutscr:+${calc:${my_name_length}-${buffer.local_variables.buflist_start_at}},…,${revscr:${my_name}}}}:${my_name}}}${if:${type}==server?${color:*white}:${eval:${color_hotlist}}}${my_name}}"
+    /set buflist.format.hotlist "${if:${plugins.var.group_tools.buflist.element.hotlist.enabled}!=?${if:${plugins.var.group_tools.buflist.section.right.size}==1? :${hotlist}}}"
+    /set buflist.format.nick_prefix "${if:${plugins.var.group_tools.buflist.element.nick_prefix.enabled}!=&&${buflist.look.nick_prefix}!=?${color:24}${nick_prefix}}"
+    /set buflist.format.lag "${if:${plugins.var.group_tools.buflist.element.lag.enabled}!=?${color:white} [${lag}]}"
+    /set plugins.var.group_tools.buflist.element.fold.format "${if:${plugins.var.group_tools.buflist.element.fold.enabled}!=&&${type}==server?${color:*white}${if:${buffer.local_variables.buflist_fold}==?⊟:⊞} }"
+    /set plugins.var.group_tools.buflist.element.filter.format "${if:${plugins.var.group_tools.buflist.element.filter.enabled}!=&&${buffer.local_variables.filter}!=? ${if:${type}==server?${color:black}:${color:24}}${buffer.local_variables.filter}}"
+
+The formats for the different buflist elements
+
+    /buflist_tools resize 15 5
+
+resize the buflist bar to 20 allowing 15 for the first section and 5 for the second section
+
+    /buflist_tools hide-only nick_prefix lag
+    /buflist_tools enable indent_tree real_net_name
+
+show all elements in the buflist except nick_prefix and lag. Enable the indent_tree and real_net_name features
+
+---
+---
+
+## Favorite_Buffer
+
+***
+
+### favorite_buffer
+
+![WeeChat Screenshot](https://gist.github.com/assets/3608314/1b13258a-e9dc-4c61-a589-b7c67440a42a)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: trigger
+- Triggers: utils_group_tools
+<!-- ending list -->
+
+***
+
+    /trigger addreplace favorite_buffer_refresh_signals signal "buffer_opened;buffer_closed;buffer_switch;buffer_renamed"
+    /trigger set favorite_buffer_refresh_signals command "/item refresh favorite_buffer"
+
+refresh the favorite_buffer item on these three signals
+
+    /trigger addreplace favorite_buffer_refresh_configs config "plugins.var.group_tools.favorite_buffer_*"
+    /trigger set favorite_buffer_refresh_configs command "/item refresh favorite_buffer"
+
+refresh the favorite_buffer if any option of a favorite_buffer group is changed
+
+    /trigger addreplace favorite_buffer_draw info "favorite_buffer_draw"
+    /trigger set favorite_buffer_draw conditions "${tg_arguments} =~ ^[1-9][0-9]*,((([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4})),)*([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4})$"
+    /trigger set favorite_buffer_draw regex "/.*/${info:window,${split:1,,,${tg_arguments}}}/my_window /.*/${split:1,,,${tg_arguments}}/my_group /.*/${split:2,,keep_eol,${tg_arguments}},/tg_info /.*/${if:${plugins.var.group_tools.favorite_buffer_common.all.general.complete}!=?complete:open}/my_display_mode /.*/plugins.var.group_tools.favorite_buffer_${my_group}.tab.visual/my_opt_prefix /.*/${${my_opt_prefix}.fg}/my_tab_fg /.*/${${my_opt_prefix}.active_fg}/my_active_tab_fg /.*/${${my_opt_prefix}.missing_fg}/my_missing_tab_fg /.*/${${my_opt_prefix}.bg}/my_tab_bg /.*/${${my_opt_prefix}.active_bg}/my_active_tab_bg /.*/${${my_opt_prefix}.missing_bg}/my_missing_tab_bg /.*/${${my_opt_prefix}.min}/my_tab_min /.*/${${my_opt_prefix}.max}/my_tab_max /.*/${${my_opt_prefix}.prefix}/my_tab_prefix /.*/${${my_opt_prefix}.suffix}/my_tab_suffix /([^,]+),/${define:my_buffer_full_name,${base_decode:64,${re:1}}}${define:my_buffer,${info:buffer,${my_buffer_full_name}}}${if:${my_display_mode}==complete||${my_buffer}!=?${define:my_buffer_state,${if:${my_buffer}!=?${if:${my_buffer}==${window[${my_window}].buffer}?active_}:missing_}}${define:my_name,${if:${my_buffer_state}==missing_?${if:${my_buffer_full_name}==*irc.*?${split:-1,.,,${my_buffer_full_name}}:${my_buffer_full_name}}:${buffer[${my_buffer}].short_name}}}${define:my_name,${cutscr:+${if:${my_tab_max}==0?${calc:${lengthscr:${my_name}}+1}:${my_tab_max}},…,${my_name}}${repeat:${calc:${my_tab_min}-${lengthscr:${my_name}}}, }}${color:${my_${my_buffer_state}tab_bg}}${my_tab_prefix}${color:${my_${my_buffer_state}tab_fg},${my_${my_buffer_state}tab_bg}} ${my_name} ${color:reset}${color:${my_${my_buffer_state}tab_bg}}${my_tab_suffix}\n}/tg_info"
+
+Redraw the favorite_buffer item
+
+    /trigger addreplace favorite_buffer_command command "favorite_buffer;${color:underline}${color:bold}Descriptions${\n}${\n}  ${color:bold}manage and display the buffers of a favorite_buffer group;add|del|toggle <group> <full_name> || clear|list <group> || move <group> <position> <full_name>;${color:underline}${color:bold}Actions${\n}${\n}  ${color:bold}add${\n}${\n}    add a buffer to a group${\n}${\n}  ${color:bold}clear${\n}${\n}    remove all buffers from a group${\n}${\n}  ${color:bold}del${\n}${\n}    remove a buffer from a group${\n}${\n}  ${color:bold}list${\n}${\n}    list the buffers of a group${\n}${\n}  ${color:bold}move${\n}${\n}    move a buffer to a new position in a group${\n}${\n}  ${color:bold}toggle${\n}${\n}    toggle a buffer of a group${\n}${\n}${color:underline}${color:bold}Arguments${\n}${\n}  ${color:bold}full_name${\n}${\n}    a buffer full name${\n}${\n}  ${color:bold}group${\n}${\n}    a favorite_buffer group${\n}${\n}  ${color:bold}position${\n}${\n}    new position of the buffer${\n}${\n}${color:underline}${color:bold}Examples${\n}${\n}  ${color:bold}Add core.chanmon to group #2${\n}${\n}    /favorite_buffer add 2 core.chanmon${\n}${\n}  ${color:bold}Remove core.weechat from group #1${\n}${\n}    /favorite_buffer del 1 core.weechat${\n}${\n}  ${color:bold}Remove every buffers from group #4${\n}${\n}    /favorite_buffer clear 4;add|clear|del|list|move|toggle"
+    /trigger set favorite_buffer_command conditions "${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list} =~ ^(((([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4})),)*([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4}))?$ && (${tg_argv_eol1} =~ (?-i)^add +[1-9][0-9]* . && ,${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list}, !!- ,${base_encode:64,${tg_argv_eol3}}, || ${tg_argv_eol1} =~ (?-i)^del +[1-9][0-9]* . && ,${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list}, ==- ,${base_encode:64,${tg_argv_eol3}}, || ${tg_argv_eol1} =~ (?-i)^toggle +[1-9][0-9]* . || ${tg_argv_eol1} =~ (?-i)^(clear|list) +[1-9][0-9]*$ || ${tg_argv_eol1} =~ (?-i)^move +[1-9][0-9]* +[1-9][0-9]* . && ,${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list}, ==- ,${base_encode:64,${tg_argv_eol4}}, && ${tg_argv3} <= ${split:count,,,${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list}} && ${split:${tg_argv3},,,${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list}} != ${base_encode:64,${tg_argv_eol4}})"
+    /trigger set favorite_buffer_command regex "/.*/${tg_argv1}/my_action /.*/${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list}/my_list /[^,]+/${if:${my_action}=~^(del|toggle)$&&${re:0}!=${base_encode:64,${tg_argv_eol3}}||${my_action}==add?${re:0}:${if:${my_action}==move?${if:${re:repl_index}==${tg_argv3}?${if:,${split:${tg_argv3},,keep_eol,${my_list}},==-,${base_encode:64,${tg_argv_eol4}},?${base_encode:64,${tg_argv_eol4}},${re:0}:${re:0},${base_encode:64,${tg_argv_eol4}}}:${if:${re:0}!=${base_encode:64,${tg_argv_eol4}}?${re:0}}}:${if:${my_action}==list?${base_decode:64,${re:0}}}}}/my_list /$/${if:${my_action}=~^(add|toggle)$&&,${plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list}, !!- ,${base_encode:64,${tg_argv_eol3}},?,${base_encode:64,${tg_argv_eol3}}}/my_list /,,+/,/my_list /^,|,$//my_list"
+    /trigger set favorite_buffer_command command "/${if:${my_action}!=list?mute -core /set plugins.var.group_tools.favorite_buffer_${tg_argv2}.list.buffers.list:print -core \tGroup favorite_buffer #${tg_argv2}:} '${my_list}'"
+
+This trigger create the favorite_buffer command which is used to manage and display the buffers of a favorite_buffer group
+
+    /trigger addreplace favorite_buffer_mouse_switch hsignal "favorite_buffer_mouse_switch"
+    /trigger set favorite_buffer_mouse_switch conditions "${plugins.var.group_tools.favorite_buffer_${_window_number}.list.buffers.list} =~ ^(((([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4})),)*([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4}))?$ && ${_key} == button1 && ${_bar_item_name} == favorite_buffer && ${plugins.var.group_tools.favorite_buffer_common.all.general.complete} == || ${info:buffer,${base_decode:64,${split:${calc:1+${_bar_item_line}},,,${plugins.var.group_tools.favorite_buffer_${_window_number}.list.buffers.list}}}} !="
+    /trigger set favorite_buffer_mouse_switch regex "/.*/${if:${plugins.var.group_tools.favorite_buffer_common.all.general.complete}!=?complete:open}/my_display_mode /.*/${plugins.var.group_tools.favorite_buffer_${_window_number}.list.buffers.list}/my_complete_list /.*/${my_complete_list}/my_open_list /[^,]+/${if:${info:buffer,${base_decode:64,${re:0}}}!=?${re:0}}/my_open_list /,,+/,/my_open_list /^,|,$//my_open_list /.*/${base_decode:64,${split:${calc:1+${_bar_item_line}},,,${my_${my_display_mode}_list}}}/my_buffer_full_name"
+    /trigger set favorite_buffer_mouse_switch command "/mute -core /set plugins.var.group_tools.favorite_buffer_common.monitor.window.previous ${window.number};/window ${_window_number};/buffer ${my_buffer_full_name};/window ${plugins.var.group_tools.favorite_buffer_common.monitor.window.previous}"
+
+This trigger handle a buffer switch in a different window
+
+    /trigger addreplace favorite_buffer_mouse_gesture hsignal "favorite_buffer_mouse_gesture"
+    /trigger set favorite_buffer_mouse_gesture conditions "${plugins.var.group_tools.favorite_buffer_${_window_number}.list.buffers.list} =~ ^(((([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4})),)*([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4}))?$ && (${_key} =* button1-gesture-* && ${_bar_item_name} == favorite_buffer && ${_window} != ${_window2} && (${_bar_name2} =~ ^favorite_buffer_(bottom|top)$ || ${_bar_item_name2} == favorite_buffer || ${_chat2} !=) || ${_key} =~ ^button1-gesture-(left|right) && ${_bar_item_name} == favorite_buffer && ${_window} == ${_window2} && ${_bar_item_name2} == favorite_buffer)"
+    /trigger set favorite_buffer_mouse_gesture regex "/.*/${if:${_window_number}==${_window_number2}?move:toggle}/my_action /.*/${if:${plugins.var.group_tools.favorite_buffer_common.all.general.complete}!=?complete:open}/my_display_mode /.*/${plugins.var.group_tools.favorite_buffer_${_window_number}.list.buffers.list}/my_complete_list /.*/${my_complete_list}/my_open_list /[^,]+/${if:${info:buffer,${base_decode:64,${re:0}}}!=?${re:0}}/my_open_list /,,+/,/my_open_list /^,|,$//my_open_list /.*/${base_decode:64,${split:${calc:1+${_bar_item_line}},,,${my_${my_display_mode}_list}}}/my_buffer_full_name"
+    /trigger set favorite_buffer_mouse_gesture command "/favorite_buffer ${my_action} ${_window_number2} ${if:${my_action}==move?${calc:1+${_bar_item_line2}}} ${my_buffer_full_name}"
+
+This trigger allow us to move or toggle a buffer using mouse gesture
+
+    /trigger addreplace favorite_buffer_cursor_toggle hsignal "favorite_buffer_cursor_toggle"
+    /trigger set favorite_buffer_cursor_toggle conditions "${plugins.var.group_tools.favorite_buffer_${_window_number}.list.buffers.list} =~ ^(((([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4})),)*([${chars:alnum}+/]{4})*([${chars:alnum}+/]{2}==|[${chars:alnum}+/]{3}=|[${chars:alnum}+/]{4}))?$ && ${_key} =~ ^[123456789]$ && ${_bar_item_name} == favorite_buffer"
+    /trigger set favorite_buffer_cursor_toggle regex "/.*/${if:${plugins.var.group_tools.favorite_buffer_common.all.general.complete}!=?complete:open}/my_display_mode /.*/${plugins.var.group_tools.favorite_buffer_${_window_number}.list.buffers.list}/my_complete_list /.*/${my_complete_list}/my_open_list /[^,]+/${if:${info:buffer,${base_decode:64,${re:0}}}!=?${re:0}}/my_open_list /,,+/,/my_open_list /^,|,$//my_open_list /.*/${base_decode:64,${split:${calc:1+${_bar_item_line}},,,${my_${my_display_mode}_list}}}/my_buffer_full_name"
+    /trigger set favorite_buffer_cursor_toggle command "/favorite_buffer toggle ${_key} ${my_buffer_full_name}"
+
+this trigger allow the toggling of a buffer in cursor mode using a digit from 1 to 9
+
+    /key bindctxt mouse @item(favorite_buffer):button1 hsignal:favorite_buffer_mouse_switch
+    /key bindctxt mouse @item(favorite_buffer):button1-gesture-* hsignal:favorite_buffer_mouse_gesture
+    /key bindctxt mouse @bar(favorite_buffer_*):button2 /mute -core /toggle plugins.var.group_tools.favorite_buffer_common.all.general.complete 1 0
+    /key bindctxt mouse @item(favorite_buffer):button2 /mute -core /toggle plugins.var.group_tools.favorite_buffer_common.all.general.complete 1 0
+    /repeat 9 /key bindctxt cursor @item(favorite_buffer):${repeat_index} hsignal:favorite_buffer_cursor_toggle;/cursor stop
+
+1. Manage buffer switching
+2. Manage gesture
+3. Toggle between the two display mode (complete and open)
+4. Toggle between the two display mode (complete and open)
+5. Create numeric bind
+<!-- ending list -->
+
+    /group_tools add favorite_buffer_1 tab visual fg "white" active_fg "white" missing_fg "250" bg "236" active_bg "24" missing_bg "238" min "5" max "5" prefix "" suffix ""
+    /group_tools add favorite_buffer_2 tab visual fg "white" active_fg "white" missing_fg "250" bg "236" active_bg "24" missing_bg "238" min "7" max "7" prefix "" suffix ""
+    /group_tools add favorite_buffer_3 tab visual fg "white" active_fg "white" missing_fg "250" bg "236" active_bg "24" missing_bg "238" min "7" max "7" prefix "" suffix ""
+
+set the apparence of the tab/bubble of the first three favorite_buffer groups
+
+    /item addreplace favorite_buffer "" "${info:favorite_buffer_draw,${window.number},${plugins.var.group_tools.favorite_buffer_${window.number}.list.buffers.list}}"
+
+this is our favorite_buffer item
+
+    /bar addreplace favorite_buffer_bottom window bottom 1 1 spacer,favorite_buffer,spacer
+    /bar set favorite_buffer_bottom priority 499
+    /bar set favorite_buffer_bottom conditions ${window.number} == 1
+
+the favorite_buffer_bottom bar is displayed in window number 1 only
+
+    /bar addreplace favorite_buffer_top window top 1 1 favorite_buffer
+    /bar set favorite_buffer_top priority 499
+    /bar set favorite_buffer_top conditions ${window.number} != 1
+
+the favorite_buffer_top bar is displayed in any window except the first one
+
+    /bar addreplace separator_between_status_and_favorite root bottom 1 0 separator_between_status_and_favorite
+
+the bar above is used to use a different symbol than weechat.look.separator_horizontal. By default the item assigned to the bar doesn't exist, use /item in combination with ${repeat:...} to set something
+
+    /favorite_buffer add 1 core.weechat
+    /favorite_buffer add 2 core.chanmon
+    /favorite_buffer add 2 core.highmon
+    /favorite_buffer add 2 core.newsmon
+    /favorite_buffer add 3 core.chanmon
+    /favorite_buffer add 3 core.highmon
+    /favorite_buffer add 3 core.newsmon
+
+add one buffer to the first group and three buffers to the second and third group
+
+---
+---
+
+## Bars
+
+***
+
+### titlenosep
+
+Dependencies:
+
+- WeeChat: 4.4.0
+<!-- ending list -->
+
+***
+
+    /bar del title
+    /bar addreplace titlenosep window top 1 0 #window_number ,buffer_title,spacer,newsmon_interest
+    /bar set titlenosep priority 500
+    /bar set titlenosep conditions ${window.number} =~ ^[23]$ 
+    /bar set titlenosep color_fg white
+    /bar set titlenosep color_delim white
+    /bar set titlenosep color_bg 24
+    /bar set titlenosep color_bg_inactive 24
+
+___
+
+***
+
+### titlesep
+
+Dependencies:
+
+- WeeChat: 4.4.0
+<!-- ending list -->
+
+***
+
+    /bar addreplace titlesep window top 1 1 #window_number ,buffer_title,spacer,newsmon_interest
+    /bar set titlesep priority 500
+    /bar set titlesep conditions ${window.number} !~ ^[23]$
+    /bar set titlesep color_fg white
+    /bar set titlesep color_delim white
+    /bar set titlesep color_bg 24
+    /bar set titlesep color_bg_inactive 24
+
+___
+
+***
+
+### input
+
+Dependencies:
+
+- WeeChat: 4.4.0
+<!-- ending list -->
+
+***
+
+    /bar addreplace input root bottom 0 0 [input_search],[input_paste],input_text
+    /bar set input priority 1000
+
+___
+
+***
+
+### nicklist
+
+Dependencies:
+
+- WeeChat: 4.4.0
+<!-- ending list -->
+
+***
+
+    /bar set nicklist color_fg 229
+    /bar set nicklist separator 1
+    /bar set nicklist conditions ${nicklist} && ${window.number} == 1
+    /bar set nicklist size_max 14
+    /bar set nicklist size 14
+
+---
+---
+
+## Monitors
+
+***
+
+### chanmon
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/217391401-a5396d27-4657-4b25-aab0-2c7baec61005.png)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: trigger
+- Triggers: utils_group_tools
+<!-- ending list -->
+
+***
+
+    /trigger addreplace chanmon_monitor print "*;irc_privmsg,matrix_message,matrix_text"
+    /trigger set chanmon_monitor conditions "${buffer.local_variables.type} == channel && ${buffer.local_variables.no_chanmon_like} == && (${plugins.var.group_tools.chanmon.feature.allow_filtered_lines.enabled} != || ${tg_displayed} !=) && (${plugins.var.group_tools.chanmon.feature.allow_hidden_channels.enabled} != || ${buffer.hidden} ==)"
+    /trigger set chanmon_monitor regex "/.*/${plugins.var.group_tools.chanmon.list.header.list}/my_list /[^,]+/${if:${re:0}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${re:0}}/my_list /[^,]+/plugins.var.group_tools.chanmon.segment.${re:0}/my_list /[^,]+/${if:${length:${${re:0}.conditions}}==||${eval_cond:${${re:0}.conditions}}?${re:0}}/my_list /,+/,/my_list /^,|,$//my_list /.*/${my_list}/my_bgs /[^,]+/${base_encode:16,${eval:${${re:0}.bg}}}/my_bgs /$/,${base_encode:16,default}/my_bgs /([^,]+)(,|$)/${define:my_fg,${eval:${${re:1}.fg}}}${define:my_bg,${base_decode:16,${split:${re:repl_index},,,${my_bgs}}}}${define:my_sep,${eval:${${re:1}.sep}}}${define:my_min,${eval:${${re:1}.min}}}${define:my_max,${eval:${${re:1}.max}}}${define:my_max,${if:${my_max}!~^[1-9][0-9]*$?0:${my_max}}}${define:my_no_space,${eval_cond:${${re:1}.no_space}}}${define:my_no_space_before,${eval_cond:${${re:1}.no_space_before}}}${define:my_no_space_after,${eval_cond:${${re:1}.no_space_after}}}${define:my_content,${eval:${${re:1}.content}}}${define:my_content,${cutscr:+${if:${my_max}==0?${calc:${lengthscr:${my_content}}+1}:${my_max}},…,${my_content}}${repeat:${calc:${my_min}-${lengthscr:${my_content}}}, }}${define:my_next_bg,${base_decode:16,${split:${calc:${re:repl_index}+1},,,${my_bgs}}}}${define:my_symbol,${if:${plugins.var.group_tools.chanmon.feature.powerline.disabled}==?${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}:${color:${my_bg},${my_next_bg}}}:${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}│}}}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_before}==? }${my_content}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_after}==? }${my_symbol}${color:reset}/my_list /.+/${re:0} /my_list /.*/${tg_tags}/my_tags / //my_tags /.*/${my_list}${tg_message}/my_message"
+    /trigger set chanmon_monitor command "/print -newbuffer chanmon -tags ${my_tags} \t${my_message}"
+
+this trigger create the chanmon monitor
+
+    /buffer add chanmon
+    /eval /set weechat.startup.command_after_plugins ${weechat.startup.command_after_plugins}${if:${weechat.startup.command_after_plugins}!=?;}/buffer add chanmon
+    /set weechat.buffer.core.chanmon.notify none
+    /set weechat.buffer.core.chanmon.highlight_words -
+    /set weechat.buffer.core.chanmon.title Channels Monitor
+    /set weechat.buffer.core.chanmon.time_for_each_line 0
+    /set weechat.buffer.core.chanmon.localvar_set_no_chanmon_like 1
+    /set weechat.buffer.irc.libera.##news.localvar_set_no_chanmon_like 1
+
+the commands above set some buffer properties for our new monitor buffer
+
+    /group_tools add chanmon segment date min "5" max "5" fg "white" bg "233" sep "246" content "${cut:5,,${split:-1,T ,,${tg_date}}}" no_space_before "1" conditions "1"
+    /group_tools add chanmon segment symbol min "0" max "0" fg "white" bg "white" sep "246" content "" no_space "1" conditions "1"
+    /group_tools add chanmon segment serv min "2" max "2" fg "white" bg "24" sep "246" content "${server}" conditions "1"
+    /group_tools add chanmon segment chan min "4" max "4" fg "white" bg "24" sep "246" content "${split:1,#,keep_eol+strip_left,${channel}}" conditions "1"
+    /group_tools add chanmon segment nick min "5" max "5" fg "white" bg "24" sep "246" content "${if:${tg_tags}=~,irc_action,?    *:${tg_tag_nick}}" conditions "1"
+    /group_tools add chanmon segment symbol min "0" max "0" fg "white" bg "white" sep "246" content "" no_space "1" conditions "1"
+    /group_tools set chanmon list header list date,symbol,serv,chan,nick
+
+the commands above create a powerline bar to be displayed in front of the messages in the monitor buffer
+
+___
+
+***
+
+### highmon
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/217391248-d81dc97d-b4ff-4754-aead-52aaa1080601.png)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: trigger
+- Triggers: utils_group_tools
+<!-- ending list -->
+
+***
+
+    /trigger addreplace highmon_monitor print "*;irc_privmsg,matrix_message,matrix_text"
+    /trigger set highmon_monitor conditions "${tg_highlight} == 1 && ${buffer.local_variables.type} == channel && ${buffer.local_variables.no_highmon_like} == && (${plugins.var.group_tools.highmon.feature.allow_filtered_lines.enabled} != || ${tg_displayed} !=) && (${plugins.var.group_tools.highmon.feature.allow_hidden_channels.enabled} != || ${buffer.hidden} ==)"
+    /trigger set highmon_monitor regex "/.*/${plugins.var.group_tools.highmon.list.header.list}/my_list /[^,]+/${if:${re:0}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${re:0}}/my_list /[^,]+/plugins.var.group_tools.highmon.segment.${re:0}/my_list /[^,]+/${if:${length:${${re:0}.conditions}}==||${eval_cond:${${re:0}.conditions}}?${re:0}}/my_list /,+/,/my_list /^,|,$//my_list /.*/${my_list}/my_bgs /[^,]+/${base_encode:16,${eval:${${re:0}.bg}}}/my_bgs /$/,${base_encode:16,default}/my_bgs /([^,]+)(,|$)/${define:my_fg,${eval:${${re:1}.fg}}}${define:my_bg,${base_decode:16,${split:${re:repl_index},,,${my_bgs}}}}${define:my_sep,${eval:${${re:1}.sep}}}${define:my_min,${eval:${${re:1}.min}}}${define:my_max,${eval:${${re:1}.max}}}${define:my_max,${if:${my_max}!~^[1-9][0-9]*$?0:${my_max}}}${define:my_no_space,${eval_cond:${${re:1}.no_space}}}${define:my_no_space_before,${eval_cond:${${re:1}.no_space_before}}}${define:my_no_space_after,${eval_cond:${${re:1}.no_space_after}}}${define:my_content,${eval:${${re:1}.content}}}${define:my_content,${cutscr:+${if:${my_max}==0?${calc:${lengthscr:${my_content}}+1}:${my_max}},…,${my_content}}${repeat:${calc:${my_min}-${lengthscr:${my_content}}}, }}${define:my_next_bg,${base_decode:16,${split:${calc:${re:repl_index}+1},,,${my_bgs}}}}${define:my_symbol,${if:${plugins.var.group_tools.highmon.feature.powerline.disabled}==?${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}:${color:${my_bg},${my_next_bg}}}:${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}│}}}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_before}==? }${my_content}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_after}==? }${my_symbol}${color:reset}/my_list /.+/${re:0} /my_list /.*/${tg_tags}/my_tags / //my_tags /.*/${my_list}${tg_message}/my_message"
+    /trigger set highmon_monitor command "/print -newbuffer highmon -tags ${my_tags} \t${my_message}"
+
+this trigger create the highmon monitor
+
+    /buffer add highmon
+    /eval /set weechat.startup.command_after_plugins ${weechat.startup.command_after_plugins}${if:${weechat.startup.command_after_plugins}!=?;}/buffer add highmon
+    /set weechat.buffer.core.highmon.notify none
+    /set weechat.buffer.core.highmon.highlight_words -
+    /set weechat.buffer.core.highmon.title Highlight Monitor
+    /set weechat.buffer.core.highmon.time_for_each_line 0
+
+the commands above set some buffer properties for our new monitor buffer
+
+    /group_tools set highmon feature allow_hidden_channels enabled 1
+    /group_tools add highmon segment date min "5" max "5" fg "white" bg "233" sep "246" content "${cut:5,,${split:-1,T ,,${tg_date}}}" no_space_before "1" conditions "1"
+    /group_tools add highmon segment symbol min "0" max "0" fg "white" bg "white" sep "246" content "" no_space "1" conditions "1"
+    /group_tools add highmon segment serv min "2" max "2" fg "white" bg "24" sep "246" content "${server}" conditions "1"
+    /group_tools add highmon segment chan min "4" max "4" fg "white" bg "24" sep "246" content "${split:1,#,keep_eol+strip_left,${channel}}" conditions "1"
+    /group_tools add highmon segment nick min "5" max "5" fg "white" bg "24" sep "246" content "${if:${tg_tags}=~,irc_action,?    *:${tg_tag_nick}}" conditions "1"
+    /group_tools set highmon list header list date,symbol,serv,chan,nick
+
+the commands above create a powerline bar to be displayed in front of the messages in the monitor buffer
+
+___
+
+***
+
+### newsmon
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/217384164-52b48a0a-3bc5-445d-b7a4-a316f5698678.gif)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: trigger
+- Triggers: utils_group_tools
+<!-- ending list -->
+
+***
+
+    /trigger addreplace newsmon_monitor print "irc.libera.##news;irc_privmsg,debug_newsmon"
+    /trigger set newsmon_monitor conditions "(${plugins.var.group_tools.newsmon.feature.allow_filtered_lines.enabled} != || ${tg_displayed} !=) && ${tg_message_nocolor} =~ ^\[[^]|]+\] +[^ ].* +→ +https?://[^ ]+$"
+    /trigger set newsmon_monitor regex "/.*/${info:newsmon_parse,site_and_sections,${tg_message_nocolor}}/my_site_and_sections /.*/${split:1,|,,${my_site_and_sections}}/my_site /.*/${split:2,|,,${my_site_and_sections}}/my_first_section /.*/${split:3,|,,${my_site_and_sections}}/my_second_section /.*/${info:newsmon_parse,title,${tg_message_nocolor}}/my_title /.*/${info:newsmon_parse,url,${tg_message_nocolor}}/my_url /.*/${plugins.var.group_tools.newsmon.list.header.list}/my_list /[^,]+/${if:${re:0}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${re:0}}/my_list /[^,]+/plugins.var.group_tools.newsmon.segment.${re:0}/my_list /[^,]+/${if:${length:${${re:0}.conditions}}==||${eval_cond:${${re:0}.conditions}}?${re:0}}/my_list /,+/,/my_list /^,|,$//my_list /.*/${my_list}/my_bgs /[^,]+/${base_encode:16,${eval:${${re:0}.bg}}}/my_bgs /$/,${base_encode:16,default}/my_bgs /([^,]+)(,|$)/${define:my_fg,${eval:${${re:1}.fg}}}${define:my_bg,${base_decode:16,${split:${re:repl_index},,,${my_bgs}}}}${define:my_sep,${eval:${${re:1}.sep}}}${define:my_min,${eval:${${re:1}.min}}}${define:my_max,${eval:${${re:1}.max}}}${define:my_max,${if:${my_max}!~^[1-9][0-9]*$?0:${my_max}}}${define:my_no_space,${eval_cond:${${re:1}.no_space}}}${define:my_no_space_before,${eval_cond:${${re:1}.no_space_before}}}${define:my_no_space_after,${eval_cond:${${re:1}.no_space_after}}}${define:my_content,${eval:${${re:1}.content}}}${define:my_content,${cutscr:+${if:${my_max}==0?${calc:${lengthscr:${my_content}}+1}:${my_max}},…,${my_content}}${repeat:${calc:${my_min}-${lengthscr:${my_content}}}, }}${define:my_next_bg,${base_decode:16,${split:${calc:${re:repl_index}+1},,,${my_bgs}}}}${define:my_symbol,${if:${plugins.var.group_tools.newsmon.feature.powerline.disabled}==?${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}:${color:${my_bg},${my_next_bg}}}:${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}│}}}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_before}==? }${my_content}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_after}==? }${my_symbol}${color:reset}/my_list /.+/${re:0} /my_list /.*/${tg_tags}/my_tags / //my_tags /.*/${my_list}${my_title}${if:${plugins.var.group_tools.newsmon.feature.keep_url.enabled}!=? → ${my_url}}/my_message"
+    /trigger set newsmon_monitor command "/print -newbuffer newsmon -tags ${my_tags} \t${my_message}"
+
+this trigger create the newsmon monitor
+
+    /trigger addreplace newsmon_article_parse info "newsmon_parse"
+    /trigger set newsmon_article_parse regex "/.*/${split:1,,,${tg_arguments}}/my_var /.*/${split:2,,keep_eol,${tg_arguments}}/my_message /.*/${my_message}/my_site_and_sections /.*/${my_message}/my_title /^\[([^]]+)\].*/${re:1}/my_site_and_sections / - /|/my_site_and_sections /^\[[^]]+\] (.*)/${re:1}/my_title /.*/${split:-1, ,,${my_title}}/my_url / [^ ]+ [^ ]+$//my_title /.*/${my_${my_var}}/tg_info"
+
+this trigger is the article parser
+
+    /trigger addreplace newsmon_article_tags_insert line "formatted;irc.libera.##news;irc_privmsg,debug_newsmon"
+    /trigger set newsmon_article_tags_insert conditions "${tg_message_nocolor} =~ ^\[[^]|]+\] +[^ ].* +→ +https?://[^ ]+$"
+    /trigger set newsmon_article_tags_insert regex "/.*/${lower:${info:newsmon_parse,site_and_sections,${tg_message_nocolor}}}/my_site_and_sections /.*/site_name,site_first_section,site_second_section/my_news_tags /[^,]+/${re:0}_${base_encode:16,${split:${re:repl_index},|,,${my_site_and_sections}}}/my_news_tags /$/${my_news_tags},/tags /\|/ - /my_site_and_sections /$/site_and_sections_${base_encode:16,${my_site_and_sections}},site_title_${base_encode:16,${lower:${info:newsmon_parse,title,${tg_message_nocolor}}}},site_url_${base_encode:16,${info:newsmon_parse,url,${tg_message_nocolor}}},/tags"
+
+this trigger appends the site_* tags to the article on the source buffer (irc.libera.##news)
+
+    /trigger addreplace newsmon_filter_rebuild command "newsmon_filter_rebuild;rebuild the news or newsmon filter;<list>;list: a list (news or newsmon)"
+    /trigger set newsmon_filter_rebuild conditions "${tg_argv_eol1} =~ ^news(mon)?$"
+    /trigger set newsmon_filter_rebuild regex "/.*/${tg_argv1}/my_list /.*/${raw:${${my_opt}_name},${${my_opt}_first_section},${${my_opt}_second_section},${${my_opt}_and_sections},${${my_opt}_name_start_with},${${my_opt}_first_section_start_with},${${my_opt}_second_section_start_with},${${my_opt}_and_sections_start_with},${${my_opt}_name_end_with},${${my_opt}_first_section_end_with},${${my_opt}_second_section_end_with},${${my_opt}_and_sections_end_with},${${my_opt}_name_contain},${${my_opt}_first_section_contain},${${my_opt}_second_section_contain},${${my_opt}_and_sections_contain},${${my_opt}_title},${${my_opt}_title_start_with},${${my_opt}_title_end_with},${${my_opt}_title_contain}}/my_options /.*/${plugins.var.group_tools.newsmon_interest.list.${my_list}.list}/my_interests /[^,]+/${if:${re:0}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${re:0}}/my_interests /,+/,/my_interests /^,|,$//my_interests /.*/${my_interests}/my_no_site_tags /([^,]+),?/${define:my_opt,plugins.var.group_tools.newsmon_interest.category.${re:1}.tags_no_site}${eval:${my_options}},/my_no_site_tags /,+/,/my_no_site_tags /^,|,$//my_no_site_tags /.*/${my_interests}/my_site_tags /,/+/my_options /([^,]+),?/${define:my_opt,plugins.var.group_tools.newsmon_interest.category.${re:1}.tags_site}${eval:${my_options}}+/my_site_tags /[+]+/+/my_site_tags /^[+]|[+]$//my_site_tags /.*/${my_no_site_tags},${my_site_tags}/my_tags /^,|,$//my_tags /^$/!hide_everything/my_tags /.*/${if:${my_list}==newsmon?core.newsmon:irc.libera.##news}/my_buffer"
+    /trigger set newsmon_filter_rebuild command "/mute -core /filter addreplace ${my_list}_interest ${my_buffer} ${my_tags} *"
+
+this trigger recreate the filters for the source buffer (irc.libera.##news) and the destination buffer (core.newsmon)
+
+    /trigger addreplace newsmon_filter_tags_rebuild config "plugins.var.group_tools.newsmon_interest.category.*.site_*;plugins.var.group_tools.newsmon_interest.category.*.no_site_*"
+    /trigger set newsmon_filter_tags_rebuild conditions "${split:6,.,,${tg_option}} =~ ^[abcdefghijklmnopqrstuvwxyz0-9_]+$ && ${split:7,.,,${tg_option}} =~ ^(no_)?site_(name|first_section|second_section|and_sections|title)(_start_with|_end_with|_contain)?$ && ${split:count,.,,${tg_option}} == 7"
+    /trigger set newsmon_filter_tags_rebuild regex "/.*/${split:6,.,,${tg_option}}/my_category /.*/${split:7,.,,${tg_option}}/my_property /.*/${my_property}/my_tag_prefix /^no_//my_tag_prefix /_(contain|start_with|end_with)$//my_tag_prefix /.*/${lower:${tg_value}}/my_tags /[^|]+/${if:${my_property}=~(end_with|contain)$?*}${base_encode:16,${re:0}}${if:${my_property}=~(start_with|contain)$?*}/my_tags /\|+/|/my_tags /^\||\|$//my_tags /.+/${if:${my_property}!~^no_?!}${my_tag_prefix}_${re:0}/my_tags /\|/${if:${my_property}=~^no_?,:+!}${my_tag_prefix}_/my_tags"
+    /trigger set newsmon_filter_tags_rebuild command "/set plugins.var.group_tools.newsmon_interest.category.${my_category}.tags_${my_property} '${my_tags}'"
+
+this trigger recreate the tags option of a site_* or no_site_+ option
+
+    /trigger addreplace newsmon_item_rebuild config "plugins.var.group_tools.newsmon_interest.list.all.list;plugins.var.group_tools.newsmon_interest.list.newsmon.list"
+    /trigger set newsmon_item_rebuild regex "/.*/${plugins.var.group_tools.newsmon_interest.list.all.list}/my_content /[^,]+/${if:${re:0}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${re:0}}/my_content /,+/,/my_content /^,|,$//my_content /([^,]+),?/${define:my_display,${plugins.var.group_tools.newsmon_interest.category.${re:1}.display}}${define:my_display,${if:${length:${my_display}}==?${re:1}:${my_display}}}${define:my_color,${if:,${plugins.var.group_tools.newsmon_interest.list.newsmon.list},=-,${re:1},?white:233}}${color:${my_color}}${color:darkgray,${my_color}}${cutscr:+5,…,${my_display}}${color:reset}${color:${my_color}}\n/my_content /.*/${base_encode:16,${my_content}}/my_item"
+    /trigger set newsmon_item_rebuild command "/mute -core /set plugins.var.group_tools.newsmon_interest.item.newsmon_interest.encoded '${my_item}';/item refresh newsmon_interest"
+
+this trigger rebuild the bar item newsmon_interest
+
+    /trigger addreplace newsmon_interest_list command "newsmon_interest_list;manage the list of active categories (news and newsmon) and the list of all categories (all);push|push_if_not|remove|content <list> <category> [<category>...];       push: put one or more categories at the end of a list${\n}push_if_not: put one or more categories at the end of a list if not already in the list${\n}     remove: remove one or more categories in a list${\n}    content: replace a list${\n}       list: a list (news, newsmon or all)${\n}   category: name of a category${\n}${\n}Put a category at the end of the newsmon list only if this category is not already part of the list:${\n}${\n}   /${tg_trigger_name} push_if_not newsmon tech${\n}${\n}Remove a category from the newsmon list:${\n}${\n}   /${tg_trigger_name} remove newsmon tech;content|push|push_if_not|remove"
+    /trigger set newsmon_interest_list conditions "${tg_argv_eol1} =~ (?-i)^(content|push|push_if_not|remove) +(news|newsmon|all) +([abcdefghijklmnopqrstuvwxyz0-9_]+ *)+$"
+    /trigger set newsmon_interest_list regex "/.*/${tg_argv1}/my_action /.*/${tg_argv2}/my_list_name /.*/plugins.var.group_tools.newsmon_interest.list.${my_list_name}.list/my_list_opt /.*/${${my_list_opt}}/my_list /[^,]+/${if:${re:0}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${re:0}}/my_list /.*/${tg_argv_eol3}/my_categories / +/,/my_categories /.*/${if:${my_action}==push_if_not?${my_categories}}/my_push_if_not_categories /[^,]+/${if:,${my_list},!-,${re:0},&&,${split:${calc:${re:repl_index}+1},,keep_eol,${my_categories}},!-,${re:0},?${re:0}}/my_push_if_not_categories /.*/${if:${my_action}==remove?${my_list}}/my_remove_categories /[^,]+/${if:,${my_categories},!-,${re:0},?${re:0}}/my_remove_categories /.*/${if:${my_action}==push_if_not?${my_push_if_not_categories}:${if:${my_action}==remove?${my_remove_categories}:${re:0}}}/my_categories /.*/${if:${my_action}=~^push?${re:0},}${my_categories}/my_list /,+/,/my_list /^,|,$//my_list ===.*===/mute -core /set ${my_list_opt} '${my_list}'===my_cmds_to_run ===$===${if:${my_list_name}=~^news?;/newsmon_filter_rebuild ${my_list_name}}===my_cmds_to_run" 
+    /trigger set newsmon_interest_list command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+this trigger manage the list of all categories, the list of actives categories on the source buffer and the list of actives categories on the destination buffer
+
+    /trigger addreplace newsmon_interest command "newsmon_interest;manage your newsmon's interests;add <category> ${\x22}<property>${\x22} ${\x22}<value>${\x22} [${\x22}<property>${\x22} ${\x22}<value>${\x22}...] || del|enable|disable <category> [<category>...];     add: add or change a category${\n}     del: delete one or more categories${\n}  enable: enable some categories${\n} disable: disable some categories${\n}category: name of a category${\n}  property: (no_)?site_(name|first_section|second_section|and_sections|title)(_contain|_start_with|_end_with)?${\n}   value: a list of sites attributes separated by pipe${\n}${\n}-----${\n}${\n}Here is the format of an article:${\n}${\n}    ${color:white,31} site_name  first_section  second_section ${color:31,default}${color:reset} article_title → article_url${\n}${\n}Not every articles have a first or second section.${\n}${\n}-----${\n}${\n}Examples of articles:${\n}${\n}    ${color:white,13} Phoronix ${color:13,default}${color:reset} Hardware Timestamping... → https://www.phoronix.com/...${\n}    ${color:white,130} Science Daily  all ${color:130,default}${color:reset} How glyphosate... → https://www.sciencedaily.com/...${\n}${\n}-----${\n}${\n}Create a tech category matching ${color:underline}exactly${color:-underline} the site ${color:bold}Phoronix${color:-bold} and ${color:bold}Ars Technica${color:-bold} in addition to all articles with a first section ${color:underline}containing${color:-underline} ${color:bold}tech${color:-bold}:${\n}${\n}${color:121}    /newsmon_interest add tech ${\x22}site_name${\x22} ${\x22}Phoronix|Ars Technica${\x22} ${\x22}site_first_section_contain${\x22} ${\x22}tech${\x22}${\n}${\n}Create a Canada category ${color:underline}containing${color:-underline} ${color:bold}Canada${color:-bold} in their site name, site first section, site second section or articles title:${\n}${\n}${color:121}    /newsmon_interest add canada ${\x22}site_and_sections_contain${\x22} ${\x22}Canada${\x22} ${\x22}site_title_contain${\x22} ${\x22}Canada${\x22}${\n}${\n}In the previous examples, notice how the properties and values are surrounded by ${\x22}${\x22}. You ${color:bold}must${color:-bold} use those if one of those contains a space but it is recommended to err on the side of caution and always use them.${\n}${\n}-----${\n}${\n}You can obtain the list of sites by visiting the URL in the topic of the ##news-chat channel on libera;add|del|enable|disable"
+    /trigger set newsmon_interest conditions "${tg_argv_eol1} =~ (?-i)^add +[abcdefghijklmnopqrstuvwxyz0-9_]+ . || ${tg_argv_eol1} =~ (?-i)^(del|enable|disable) +([abcdefghijklmnopqrstuvwxyz0-9_]+ *)+$"
+    /trigger set newsmon_interest regex "/.*/${tg_argv1}/my_action /.*/${if:${my_action}==add?${tg_argv2}:${tg_argv_eol2}}/my_categories / +/ /my_categories /.*/${if:${my_action}=~^(add|enable)$?push_if_not:remove}/my_list_action /.*/${if:${my_action}=~^(add|del)$?all,news,}newsmon/my_lists /.*/${if:${my_action}==add?${repeat:${calc:${tg_shell_argc}-3},,}}/my_add_cmds /,/${if:${re:repl_index}=~[13579]$&&${tg_shell_argv${calc:${re:repl_index}+2}}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${calc:${re:repl_index}+2},}/my_add_cmds ===([^,]+),===${define:my_property,${tg_shell_argv${re:1}}}${define:my_value,${tg_shell_argv${calc:${re:1}+1}}}/mute -core /set plugins.var.group_tools.newsmon_interest.category.${my_categories}.${my_property} '\${base_decode:16,${base_encode:16,${my_value}}}';===my_add_cmds /.*/${if:${my_action}==del?${my_categories}}/my_del_cmds ===([^ ]+) ?===/mute -core /unset -mask plugins.var.group_tools.newsmon_interest.category.${re:1}.*;===my_del_cmds /.*/${my_lists}/my_list_cmds ===([^,]+),?===/newsmon_interest_list ${my_list_action} ${re:1} ${my_categories};===my_list_cmds /.*/${my_add_cmds}${my_del_cmds}${my_list_cmds}/my_cmds_to_run"
+    /trigger set newsmon_interest command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+this trigger manage the categories of interests
+
+    /trigger addreplace newsmon_item_click hsignal "newsmon_item_click"
+    /trigger set newsmon_item_click regex "/.*/${plugins.var.group_tools.newsmon_interest.list.all.list}/my_list /[^,]+/${if:${re:0}=~^[abcdefghijklmnopqrstuvwxyz0-9_]+$?${re:0}}/my_list /[^,]+/${if:${calc:${re:repl_index}-1}==${_bar_item_line}?${re:0}}/my_list /,//my_list /.*/${my_list}/my_category /.*/${if:${_key}==button1?content:${if:,${plugins.var.group_tools.newsmon_interest.list.newsmon.list},=-,${my_category},?remove:push}}/my_action"
+    /trigger set newsmon_item_click command "/newsmon_interest_list ${my_action} newsmon ${my_category}"
+
+    /key bindctxt mouse @item(newsmon_interest):button1* hsignal:newsmon_item_click
+    /key bindctxt mouse @item(newsmon_interest):button2* hsignal:newsmon_item_click
+
+this trigger and these binds allows you to enable or disable categories by clicking on them in the newsmon bar item
+
+    /trigger addreplace newsmon_article_click hsignal "newsmon_article_click"
+    /trigger set newsmon_article_click regex "/.*/${_chat_line_tags}/my_article_url /[^,]+/${if:${re:0}=~^site_url_[[:xdigit:]]+$?${re:0}}/my_article_url /site_url_//my_article_url /,//my_article_url /.*/${base_decode:16,${re:0}}/my_article_url"
+    /trigger set newsmon_article_click command "/command -buffer ${buffer.full_name} core /input insert ${my_article_url}\x20"
+
+    /key bindctxt cursor @chat(core.newsmon):i hsignal:newsmon_article_click;/cursor stop
+
+this trigger and this bind allows you to get the URL of an article from the tags when you press 'i' in cursor mode on an article
+
+    /buffer add newsmon
+    /eval /set weechat.startup.command_after_plugins ${weechat.startup.command_after_plugins}${if:${weechat.startup.command_after_plugins}!=?;}/buffer add newsmon
+    /set weechat.buffer.core.newsmon.notify none
+    /set weechat.buffer.core.newsmon.highlight_words -
+    /set weechat.buffer.core.newsmon.title News Monitor
+    /set weechat.buffer.core.newsmon.time_for_each_line 0
+    /set weechat.buffer.irc.libera.##news.notify none
+    /set weechat.buffer.irc.libera.##news.hidden 1
+
+the commands above set some buffer properties for our new monitor buffer
+
+    /item addreplace newsmon_interest "${buffer.full_name} == core.newsmon" "${base_decode:16,${plugins.var.group_tools.newsmon_interest.item.newsmon_interest.encoded}}"
+
+the command above create a new bar item
+
+    /group_tools set newsmon all general colors 1,3,4,5,6,9,10,13,17,22,23,25,27,33,53,55,57,63,93,94,124,129,130
+    /group_tools add newsmon segment site_name min "0" max "${calc:10+${if:${lengthscr:${my_first_section}}==?4:${if:${lengthscr:${my_first_section}}<7?7-${lengthscr:${my_first_section}}}}}" fg "white" bg "${info:nick_color_name,${base_encode:16,${my_site_and_sections}};${plugins.var.group_tools.newsmon.all.general.colors}}" sep "white" content "${my_site}" no_space_before "1"
+    /group_tools add newsmon segment site_first_section min "0" max "${calc:7+${if:${lengthscr:${my_site}}<10?10-${lengthscr:${my_site}}}}" fg "white" bg "${info:nick_color_name,${base_encode:16,${my_site_and_sections}};${plugins.var.group_tools.newsmon.all.general.colors}}" sep "white" content "${my_first_section}" conditions "${my_first_section}!="
+    /group_tools add newsmon segment site_no_first_section min "0" max "${calc:7+${if:${lengthscr:${my_site}}<10?10-${lengthscr:${my_site}}}}" fg "white" bg "${info:nick_color_name,${base_encode:16,${my_site_and_sections}};${plugins.var.group_tools.newsmon.all.general.colors}}" sep "white" content "N/A" conditions "${my_first_section}=="
+    /group_tools set newsmon list header list site_name,site_first_section,site_no_first_section
+
+the commands above create a powerline bar to be displayed in front of the messages in the monitor buffer
+
+    /newsmon_interest add tech "display" "💻" "site_name" "Wired|EFF Updates|techdirt|TorrentFreak|Hacker News|CNET|phoronix|Ars Technica|Journal du hacker" "site_and_sections_contain" "netsec|Tech" "site_title_contain" "Linux|Computer|Techno"
+    /newsmon_interest add science "display" "🧪" "site_and_sections_contain" "Science|Space|Environment" "site_title_contain" "Study|Climate"
+    /newsmon_interest add canada "display" "🇨🇦" "site_and_sections_contain" "Canada|Quebec|Montreal" "site_title_contain" "Canada|Quebec|Montreal" 
+    /newsmon_interest add world "display" "🌐" "site_and_sections_contain" "World|International"
+    /newsmon_interest add health "display" "🏥" "site_and_sections_contain" "Health" "site_title_contain" "Health"
+    /newsmon_interest add finance "display" "💲" "site_and_sections_contain" "Finance|Business|Money|Company|Economy"
+    /newsmon_interest add hockey "display" "🏒" "site_title_contain" "NHL|Hockey"
+    /newsmon_interest add life "display" "🙂" "site_and_sections_contain" "Life|People|Culture|Music|Film|Religion|Art"
+
+---
+---
+
+## Layouts
+
+***
+
+### main_monitor_1
+
+***
+
+    /eval /window splith ${calc:9 / ${window[gui_current_window].win_height} * 100 // 1}
+    /buffer highmon
+    /window 1
+    /layout store main-monitor1 windows
+
+___
+
+***
+
+### main_monitor_1_monitor_2
+
+***
+
+    /window 2
+    /window splitv 50
+    /buffer core.newsmon
+    /window 1
+    /layout store main-monitor1-monitor2 windows
+
+---
+---
+
+## Misc
+
+***
+
+### new_logo
+
+![WeeChat Screenshot](https://gist.github.com/assets/3608314/3bb1eb91-9959-4ca0-b9c3-f7fae8c02e59)
+
+Dependencies:
+
+- WeeChat: 3.6
+- Plugins: trigger
+<!-- ending list -->
+
+***
+
+    /item addreplace new_logo_weechat_logo "" "${define:my_green,240}${define:my_blue,24}${define:my_left_margin,${repeat:${calc:(${weechat.bar.buflist.size}-13)//2}, }}${my_left_margin}${color:${my_green}}${color:,${my_green}}            ${color:reset}${\n}${my_left_margin}${color:${my_green}}▀▀▀  ${color:${my_blue}}▄▄▄  ▄▄▄${\n}${my_left_margin}${color:${my_blue}}▇▇▇  ${color:${my_blue},${my_blue}}   ${color:reset}  ${color:${my_blue},${my_blue}}   ${color:reset}${\n}${my_left_margin}${color:${my_blue},${my_blue}}   ${color:reset}  ${color:${my_blue},${my_blue}}   ${color:reset}  ${color:${my_blue},${my_blue}}   ${color:reset}${\n}${my_left_margin}${color:${my_blue}}${color:,${my_blue}}            ${color:reset}"
+    /item addreplace new_logo_empty_line "" " "
+    /item addreplace new_logo_separator "" "${color:31}${repeat:${weechat.bar.buflist.size},─}"
+    /item addreplace new_logo_weechat_version "" "${repeat:${calc:(${weechat.bar.buflist.size}-${length:${info:version}})//2}, }${color:*white}${info:version}"
+
+add four items: the logo itself, an empty line, a separator and the weechat version
+
+    /bar set buflist items new_logo_empty_line,new_logo_weechat_logo,new_logo_empty_line,new_logo_weechat_version,new_logo_separator,buflist
+
+add these items to the buflist bar just before the buflist item
+
+    /trigger addreplace new_logo_refresh config "weechat.bar.buflist.size" "" "" "/item refresh new_logo_weechat_logo;/item refresh new_logo_weechat_version;/item refresh new_logo_separator"
+
+refresh the items when the buflist is resized (to center them)
+
+___
+
+***
+
+### powerline_items
+
+![WeeChat Screenshot](https://gist.github.com/assets/3608314/a1eb0117-54dd-40d8-8160-8de9d5587c17)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: python, trigger
+- PythonLib: psutil
+- Triggers: utils_group_tools
+<!-- ending list -->
+
+***
+
+    /trigger addreplace powerline_items_weechat_info_refresh_signals signal "buffer_closed;buffer_lines_hidden;buffer_modes_changed;buffer_moved;buffer_opened;buffer_renamed;buffer_switch;buffer_unzoomed;buffer_zoomed;filters_*;nicklist_*;window_closed;window_switch"
+    /trigger set powerline_items_weechat_info_refresh_signals command "/item refresh powerline_items_weechat_info"
+
+    /trigger addreplace powerline_items_refresh_configs config "plugins.var.group_tools.powerline_items.*"
+    /trigger set powerline_items_refresh_configs command "/item refresh powerline_items_*"
+
+    /trigger addreplace powerline_items_weechat_info_refresh_timer timer "60000;60;0"
+    /trigger set powerline_items_weechat_info_refresh_timer command "/item refresh powerline_items_weechat_info"
+
+    /trigger addreplace powerline_items_sys_usage_refresh_timer timer "1000;0;0"
+    /trigger set powerline_items_sys_usage_refresh_timer command "/item refresh powerline_items_sys_usage"
+
+    /trigger addreplace powerline_items_left_to_right_draw info "powerline_items_draw;powerline_items_left_to_right_draw" 
+    /trigger set powerline_items_left_to_right_draw conditions "${tg_arguments} =~ (?-i)^[${chars:alnum}_]+,([1-9][0-9]*)?$ && ${plugins.var.group_tools.powerline_items.list.${split:1,,,${tg_arguments}}.list} =~ ^([${chars:alnum}_]+,)*[${chars:alnum}_]+$"
+    /trigger set powerline_items_left_to_right_draw regex "/.*/${split:1,,,${tg_arguments}}/my_item /.*/${info:window,${split:2,,,${tg_arguments}}}/my_window /^$/${window[gui_current_window]}/my_window /.*/${window[${my_window}].buffer}/my_buffer /.*/${plugins.var.group_tools.powerline_items.list.${my_item}.list}/tg_info /[^,]+/plugins.var.group_tools.powerline_items.segment.${re:0}/tg_info /[^,]+/${if:${length:${${re:0}.conditions}}==||${eval_cond:${${re:0}.conditions}}?${re:0}}/tg_info /,,+/,/tg_info /^,|,$//tg_info /.*/${tg_info}/my_bgs /[^,]+/${base_encode:16,${eval:${${re:0}.bg}}}/my_bgs /$/,${base_encode:16,bar_bg}/my_bgs /([^,]+)(,|$)/${define:my_fg,${eval:${${re:1}.fg}}}${define:my_bg,${base_decode:16,${split:${re:repl_index},,,${my_bgs}}}}${define:my_sep,${eval:${${re:1}.sep}}}${define:my_min,${eval:${${re:1}.min}}}${define:my_max,${eval:${${re:1}.max}}}${define:my_max,${if:${my_max}!~^[1-9][0-9]*$?0:${my_max}}}${define:my_no_space,${eval_cond:${${re:1}.no_space}}}${define:my_no_space_before,${eval_cond:${${re:1}.no_space_before}}}${define:my_no_space_after,${eval_cond:${${re:1}.no_space_after}}}${define:my_content,${eval:${${re:1}.content}}}${define:my_content,${cutscr:+${if:${my_max}==0?${calc:${lengthscr:${my_content}}+1}:${my_max}},…,${my_content}}${repeat:${calc:${my_min}-${lengthscr:${my_content}}}, }}${define:my_next_bg,${base_decode:16,${split:${calc:${re:repl_index}+1},,,${my_bgs}}}}${define:my_symbol,${if:${plugins.var.group_tools.powerline_items.feature.powerline.disabled}==?${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}:${if:${re:repl_index}==${split:count,,,${tg_info}}?${color:${my_bg}}${color:${my_next_bg}}:${color:${my_bg},${my_next_bg}}}}:${if:${color:${my_bg}}==${color:${my_next_bg}}?${color:${my_sep}}│}}}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_before}==? }${my_content}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_after}==? }${my_symbol}/tg_info"
+
+    /trigger addreplace powerline_items_right_to_left_draw info "powerline_items_right_to_left_draw" 
+    /trigger set powerline_items_right_to_left_draw conditions "${tg_arguments} =~ (?-i)^[${chars:alnum}_]+,([1-9][0-9]*)?$ && ${plugins.var.group_tools.powerline_items.list.${split:1,,,${tg_arguments}}.list} =~ ^([${chars:alnum}_]+,)*[${chars:alnum}_]+$"
+    /trigger set powerline_items_right_to_left_draw regex "/.*/${split:1,,,${tg_arguments}}/my_item /.*/${info:window,${split:2,,,${tg_arguments}}}/my_window /^$/${window[gui_current_window]}/my_window /.*/${window[${my_window}].buffer}/my_buffer /.*/${plugins.var.group_tools.powerline_items.list.${my_item}.list}/tg_info /[^,]+/plugins.var.group_tools.powerline_items.segment.${re:0}/tg_info /[^,]+/${if:${length:${${re:0}.conditions}}==||${eval_cond:${${re:0}.conditions}}?${re:0}}/tg_info /,,+/,/tg_info /^,|,$//tg_info /.*/${tg_info}/my_bgs /[^,]+/${base_encode:16,${eval:${${re:0}.bg}}}/my_bgs /.*/${base_encode:16,bar_bg},${re:0}/my_bgs /([^,]+)(,|$)/${define:my_fg,${eval:${${re:1}.fg}}}${define:my_bg,${base_decode:16,${split:${calc:${re:repl_index}+1},,,${my_bgs}}}}${define:my_sep,${eval:${${re:1}.sep}}}${define:my_min,${eval:${${re:1}.min}}}${define:my_max,${eval:${${re:1}.max}}}${define:my_max,${if:${my_max}!~^[1-9][0-9]*$?0:${my_max}}}${define:my_no_space,${eval_cond:${${re:1}.no_space}}}${define:my_no_space_before,${eval_cond:${${re:1}.no_space_before}}}${define:my_no_space_after,${eval_cond:${${re:1}.no_space_after}}}${define:my_content,${eval:${${re:1}.content}}}${define:my_content,${cutscr:+${if:${my_max}==0?${calc:${lengthscr:${my_content}}+1}:${my_max}},…,${my_content}}${repeat:${calc:${my_min}-${lengthscr:${my_content}}}, }}${define:my_prev_bg,${base_decode:16,${split:${re:repl_index},,,${my_bgs}}}}${define:my_symbol,${if:${plugins.var.group_tools.powerline_items.feature.powerline.disabled}==?${if:${color:${my_bg}}==${color:${my_prev_bg}}?${color:${my_sep}}:${if:${re:repl_index}==${split:count,,,${tg_info}}?${color:${my_bg}}${color:${my_next_bg}}:${color:${my_bg},${my_next_bg}}}}:${if:${color:${my_bg}}==${color:${my_prev_bg}}?${color:${my_sep}}│}}}${my_symbol}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_before}==? }${my_content}${color:${my_fg},${my_bg}}${if:${my_no_space}==&&${my_no_space_after}==? }/tg_info"
+
+The triggers above redraw the powerline_items_weechat_info and powerline_items_sys_usage
+
+    /group_tools add powerline_items segment time fg "white" bg "233" min 0 max 0 sep "246" content "${date:%H:%M}" no_space_before "1"
+    /group_tools add powerline_items segment symbol fg "white" bg "white" min 0 max 0 sep "246" content "" no_space "1"
+    /group_tools add powerline_items segment buffer_plugin_server fg "white" bg "24" min 0 max 0 sep "246" content "${color:white}${if:${buffer[${my_buffer}].plugin_name_for_upgrade}!=?${buffer[${my_buffer}].plugin_name_for_upgrade}:${if:${length:${buffer[${my_buffer}].plugin.name}}!=?${buffer[${my_buffer}].plugin.name}:core}}${if:${buffer[${my_buffer}].local_variables.server}!=?${color:246}/${color:white}${buffer[${my_buffer}].local_variables.server}}"
+    /group_tools add powerline_items segment buffer_info fg "white" bg "236" min 0 max 0 sep "246" content "${color:white}${buffer[${my_buffer}].number}${color:246}:${color:*white}${buffer[${my_buffer}].short_name}${if:${length:${buffer[${my_buffer}].modes}}!=?${color:246}(${color:white}${split:1, ,,${buffer[${my_buffer}].modes}}${if:${buffer[${my_buffer}].modes}=~[ ]? …}${color:246})}${if:${buffer[${my_buffer}].nicklist}!=?${color:246}${\x7b}${color:white}${buffer[${my_buffer}].nicklist_nicks_count}${color:246}${\x7d}}${if:${buffer[${my_buffer}].active}==2?!}${if:${buffer[${my_buffer}].lines.lines_hidden}!=?•}"
+    /group_tools add powerline_items segment cpu fg "white" bg "236" min 0 max 0 sep "246" content "${color:246}▣  ${color:white}${define:my_cpu_percent,${info:python_eval,import psutil;print(psutil.cpu_percent(interval=0.0,percpu=False))}}${define:my_cpu_percent,${if:${my_cpu_percent}==100.0?100:${if:${my_cpu_percent}!~^[0-9]+(.[0-9]+)$?N/A:${my_cpu_percent}}}} ${if:${length:${my_cpu_percent}}<4? }${my_cpu_percent}"
+    /group_tools add powerline_items segment mem fg "white" bg "24" min 0 max 0 sep "246" content "${color:246}▬ ${color:white}${define:my_mem_percent,${info:python_eval,import psutil;print(psutil.virtual_memory().percent)}}${define:my_mem_percent,${if:${my_mem_percent}==100.0?100:${if:${my_mem_percent}!~^[0-9]+(.[0-9]+)$?N/A:${my_mem_percent}}}} ${if:${length:${my_mem_percent}}<4? }${my_mem_percent}" 
+    /group_tools add powerline_items segment swap fg "white" bg "233" min 0 max 0 sep "246" content "${color:246}⎘ ${color:white}${define:my_swap_percent,${info:python_eval,import psutil;print(psutil.swap_memory().percent)}}${define:my_swap_percent,${if:${my_swap_percent}==100.0?100:${if:${my_swap_percent}!~^[0-9]+(.[0-9]+)$?N/A:${my_swap_percent}}}} ${if:${length:${my_swap_percent}}<4? }${my_swap_percent}" no_space_after "1" 
+
+THe previous group_tools commands create 7 segments for us to use
+
+    /group_tools set powerline_items list weechat_info list time,symbol,buffer_plugin_server,buffer_info
+
+    /item addreplace powerline_items_weechat_info "" "${info:powerline_items_draw,weechat_info,${window.number}}"
+
+The previous commands create the powerline_items_weechat_info item which is a powerline line with the segments time,buffer_plugin_server,buffer_info
+
+    /group_tools set powerline_items list sys_usage list cpu,mem,swap
+
+    /item addreplace powerline_items_sys_usage "" "${info:powerline_items_right_to_left_draw,sys_usage,${window.number}}"
+
+The previous commands create the powerline_items_sys_usage item which is a powerline line with the segments cpu,mem,swap
+
+    /bar addreplace status root bottom 1 0 powerline_items_weechat_info,spacer,completion,spacer,scroll,powerline_items_sys_usage
+    /bar set status priority 500
+    /bar set status color_fg white
+    /bar set status color_delim white
+    /bar set status color_bg 240
+
+The previous commands recreate the status bar with our two powerlines items plus the completion and scroll item provided by WeeChat
+
+___
+
+***
+
+### input_info
+
+![WeeChat Screenshot](https://gist.github.com/assets/3608314/bc9d4886-dea2-4db6-a488-aec029cfa18c)
+
+Dependencies:
+
+- WeeChat: 4.3.0
+- Plugins: irc, python, trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace input_info_bubbles modifier "input_text_display"
+    /trigger set input_info_bubbles conditions "${buffer[${tg_modifier_data}].local_variables.plugin} == irc && ${buffer[${tg_modifier_data}].local_variables.type} =~ ^(channel|private)$ && ${buffer[${tg_modifier_data}].input_multiline} =="
+    /trigger set input_info_bubbles regex "/.*/${buffer[${tg_modifier_data}].input_buffer}/my_string /.*/${split:count,\n,,${my_string}}/my_nb_lines /.*/0/my_nb_cmds /.*/0/my_nb_texts /.*/0/my_nb_privmsgs /.*/${repeat:${my_nb_lines},,}/my_nb_cmds_texts_privmsgs ===,===${define:my_line_content,${split:${re:repl_index},\n,,${my_string}}}${define:my_line_length,${length:${my_line_content}}}${define:my_line_type,${if:${my_line_length}==||/${weechat.look.command_chars}!!-${cut:1,,${my_line_content}}?text:cmd}}${define:my_nb_${my_line_type}s,${calc:${my_nb_${my_line_type}s}+1}}${if:${my_line_type}==text&&${my_line_length}!=?${define:my_nb_privmsgs,${calc:${my_nb_privmsgs}+${info:python_eval,import base64;print(weechat.info_get_hashtable('irc_message_split', dict([('message', base64.b64decode('${base_encode:64,PRIVMSG ${buffer[${tg_modifier_data}].local_variables.channel} \:${my_line_content}}').decode()), ('server', base64.b64decode('${base_encode:64,${buffer[${tg_modifier_data}].local_variables.server}}'))]))['count'])}}}}${if:${re:repl_index}==${my_nb_lines}?${my_nb_cmds}|${my_nb_texts}|${my_nb_privmsgs}}===my_nb_cmds_texts_privmsgs /.*/CMD,TEXT,PRIVMSG,/my_bubbles /([^,]+),/${color:31}${color:*white,31}${re:1}s${color:reset}${color:31,24} ${color:*white}${split:${re:repl_index},|,,${my_nb_cmds_texts_privmsgs}}${color:24,default} /my_bubbles /.+/${re:0}\n${my_bubbles}/tg_string"
+
+This trigger add three bubbles displaying infos about the current content of the input. Works only on IRC buffers (channels and privates only).
+
+___
+
+***
+
+### conf_parser
+
+![WeeChat Screenshot](https://gist.github.com/assets/3608314/528fb291-ee22-4d6d-bd58-30c8725c46d9)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: exec, trigger
+- Programs: sed
+<!-- ending list -->
+
+***
+
+    /trigger addreplace conf_parser_index_rebuild hsignal "conf_parser_index_rebuild"
+    /trigger set conf_parser_index_rebuild conditions "${out} =~ ^(## +[abcdefghijklmnopqrstuvwxyz0-9_]+ *${\n}(### +[abcdefghijklmnopqrstuvwxyz0-9_]+ *${\n})+)+$"
+    /trigger set conf_parser_index_rebuild regex "/.*/${out}/my_index /\n//my_index /### +/;###/my_index /## +/,##/my_index /^,//my_index /((^|,)[^;]+);([^,]+)/${re:1}+0;${re:3}/my_index"
+    /trigger set conf_parser_index_rebuild command "/mute -core /set plugins.var.group_tools.conf_parser.misc.index.content '${my_index}';/command -buffer core.weechat trigger /conf_parser_items_rebuild"
+
+The conf_parser_index_rebuild trigger is used to rebuild the index (the list of sections and subsections of this config)
+
+    /trigger addreplace conf_parser_items_rebuild command "conf_parser_items_rebuild;this command rebuild both items (conf_parser_item_line and conf_parser_item_index)"
+    /trigger set conf_parser_items_rebuild conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_items_rebuild regex "/.*/,${plugins.var.group_tools.conf_parser.misc.index.content}/my_last_section /(\+0);[^,]+/${re:1}/my_last_section /.*/${my_last_section}/my_others_sections /.*(,[^,]+)$/${re:1}/my_last_section /(.*),[^,]+$/${re:1}/my_others_sections /###([a-z0-9_]+)(,|$)/│ └─ ${re:1}${re:2}/my_others_sections /###/│ ├─ /my_others_sections /##([a-z0-9_]+)\+([01])/├─${if:${re:2}==1?⊟:⊞} ${re:1}/my_others_sections /###([a-z0-9_]+)(,|$)/  └─ ${re:1}${re:2}/my_last_section /###/  ├─ /my_last_section /##([a-z0-9_]+)\+([01])/└─${if:${re:2}==1?⊟:⊞} ${re:1}/my_last_section /.*/⊟ Config${my_others_sections}${my_last_section}/my_item_index_content /;/,/my_item_index_content /.*/${calc:${split:count,,,${my_item_index_content}}-1}/my_total /.*/${repeat:${my_total},,}/my_item_line_content /,/${repeat:${calc:${length:${my_total}}-${length:${re:repl_index}}}, }${re:repl_index}.${raw:${\x5cn}}/my_item_line_content /.*/${repeat:${calc:${length:${my_total}}-${length:${re:repl_index}}}, }0.${raw:${\x5cn}}${re:0}/my_item_line_content /,/${raw:${\x5cn}}/my_item_index_content /.*/${if:${plugins.var.group_tools.conf_parser.index.config.collapsed}==?${my_item_line_content}:${repeat:${calc:${length:${my_total}}-${length:${re:repl_index}}}, }0.}/my_item_line_content /.*/${if:${plugins.var.group_tools.conf_parser.index.config.collapsed}==?${my_item_index_content}:⊞ Config}/my_item_index_content"
+    /trigger set conf_parser_items_rebuild command "/mute -core /item addreplace conf_parser_item_line '' '${my_item_line_content}';/mute -core /item addreplace conf_parser_item_index '' '${my_item_index_content}'"
+
+the conf_parser_items_rebuild is used to rebuild both items (conf_parser_item_line and conf_parser_item_index) each time we toggle config, toggle a section or rebuild the index
+
+    /trigger addreplace conf_parser_input modifier "input_text_for_buffer"
+    /trigger set conf_parser_input conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$ && ${buffer[${tg_modifier_data}].full_name} == exec.exec.conf_parser && ${tg_string_nocolor} =~ (?-i)^[rst] +[0-9]+( +[abcdefghijklmnopqrstuvwxyz0-9_]*)?$"
+    /trigger set conf_parser_input regex "/.*/${split:1, ,collapse_seps,${tg_string_nocolor}}/my_action /./${if:${re:0}==r?run:${if:${re:0}==s?show:toggle}}/my_action /.*/${split:2, ,collapse_seps,${tg_string_nocolor}}/my_line_number /.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_lines /(\+0);[^,]+/${re:1}/my_lines /;/,/my_lines /.*/${split:${my_line_number},,,${my_lines}}/my_line_content /.*/${if:${my_line_number}==0?config:${if:${my_line_content}!-+?subsection:section}/my_type /.*/${if:${my_type}==subsection&&${my_action}==toggle?show:${re:0}}/my_action /.*/${split:3, ,collapse_seps,${tg_string_nocolor}}/my_extra_arg /.*//tg_string"
+    /trigger set conf_parser_input command "/command -buffer core.weechat trigger /conf_parser_${my_type}_${my_action} ${my_line_number} ${my_extra_arg}"
+
+the trigger conf_parser_input is used to deal with the input provided by the user. The user can send a 'r' to run the code in config/a section/a subsection, 's' to show the code in config/a section/a subsection or 't' to toggle config or a section
+
+    /trigger addreplace conf_parser_item_line_click hsignal "conf_parser_item_line_click"
+    /trigger set conf_parser_item_line_click conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_item_line_click regex "/.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_lines /(\+0);[^,]+/${re:1}/my_lines /;/,/my_lines /.*/${split:${_bar_item_line},,,${my_lines}}/my_line_content /.*/${if:${_bar_item_line}==0?config:${if:${my_line_content}!-+?subsection:section}/my_type"
+    /trigger set conf_parser_item_line_click command "/command -buffer core.weechat trigger /conf_parser_${my_type}_show ${_bar_item_line}"
+
+the trigger conf_parser_item_line_click is used to deal with mouse click on the conf_parser_item_line item. It just send a show command to show the content of config/that section or that subsection
+
+    /trigger addreplace conf_parser_item_index_click hsignal "conf_parser_item_index_click"
+    /trigger set conf_parser_item_index_click conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_item_index_click regex "/.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_lines /(\+0);[^,]+/${re:1}/my_lines /;/,/my_lines /.*/${split:${_bar_item_line},,,${my_lines}}/my_line_content /.*/${if:${_bar_item_line}==0?config:${if:${my_line_content}!-+?subsection:section}/my_type /.*/${if:${my_type}==config?${if:${_bar_item_col}==0?toggle:show}:${if:${my_type}==section?${if:${_bar_item_col}==2?toggle:show}:show}}/my_action"
+    /trigger set conf_parser_item_index_click command "/command -buffer core.weechat trigger /conf_parser_${my_type}_${my_action} ${_bar_item_line}"
+
+the trigger conf_parser_item_index_click is used to deal with mouse click on the conf_parser_item_index item. It send a toggle command if you click on the collapse/expand button otherwise it send the show command
+
+    /trigger addreplace conf_parser_config_run command "conf_parser_config_run"
+    /trigger set conf_parser_config_run regex "===.*===${if:${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}!=?${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}:${env:HOME}/config.md}===my_config"
+    /trigger set conf_parser_config_run command "/exec -oc -nosw sed -nE '/    \/${tg_argv2}/s/^    //p' ${my_config}"
+
+the trigger conf_parser_config_run is used to run the code of config
+
+    /trigger addreplace conf_parser_config_show command "conf_parser_config_show"
+    /trigger set conf_parser_config_show regex "===.*===${if:${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}!=?${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}:${env:HOME}/config.md}===my_config"
+    /trigger set conf_parser_config_show command "/buffer clear exec.conf_parser;/exec -buffer conf_parser -nf -noln -name conf_parser_output -norc sed '' ${my_config}"
+
+the trigger conf_parser_config_show is used to show the content of config
+
+    /trigger addreplace conf_parser_config_toggle command "conf_parser_config_toggle"
+    /trigger set conf_parser_config_toggle command "/mute -core /toggle plugins.var.group_tools.conf_parser.index.config.collapsed 1;/command -buffer core.weechat trigger /conf_parser_items_rebuild"
+
+the trigger conf_parser_config_toggle is used to toggle config
+
+    /trigger addreplace conf_parser_section_run command "conf_parser_section_run;this command is not designed to be run manually"
+    /trigger set conf_parser_section_run conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_section_run regex "===.*===${if:${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}!=?${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}:${env:HOME}/config.md}===my_config /.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_section /(\+0);[^,]+/${re:1}/my_section /;/,/my_section /.*/${split:1,#,strip_left,${split:1,+,,${split:${tg_argv1},,,${my_section}}}}/my_section"
+    /trigger set conf_parser_section_run command "/exec -oc -nosw sed -nE '/^## +${my_section} *$/,/^---/{/    \/${tg_argv2}/s/^    //p}' ${my_config}"
+
+the trigger conf_parser_section_run is used to run the code of a section
+
+    /trigger addreplace conf_parser_section_show command "conf_parser_section_show;this command is not designed to be run manually"
+    /trigger set conf_parser_section_show conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_section_show regex "===.*===${if:${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}!=?${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}:${env:HOME}/config.md}===my_config /.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_section /(\+0);[^,]+/${re:1}/my_section /;/,/my_section /.*/${split:1,#,strip_left,${split:1,+,,${split:${tg_argv1},,,${my_section}}}}/my_section"
+    /trigger set conf_parser_section_show command "/buffer clear exec.conf_parser;/exec -buffer conf_parser -nf -noln -name conf_parser_output -norc sed -nE '/^## +${my_section} *$/,/^---/p' ${my_config}"
+
+the trigger conf_parser_section_show is used to show the content of a section
+
+    /trigger addreplace conf_parser_section_toggle command "conf_parser_section_toggle;this command is not designed to be run manually"
+    /trigger set conf_parser_section_toggle conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_section_toggle regex "/.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_section /(\+0);[^,]+/${re:1}/my_section /;/,/my_section /.*/${split:1,+,,${split:${tg_argv1},,,${my_section}}}/my_section /.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_updated_index /(##[a-z0-9_]+)\+([01])/${if:${re:1}==${my_section}?${re:1}+${if:${re:2}==0}:${re:0}}/my_updated_index"
+    /trigger set conf_parser_section_toggle command "/mute -core /set plugins.var.group_tools.conf_parser.misc.index.content '${my_updated_index}';/command -buffer core.weechat trigger /conf_parser_items_rebuild"
+
+the trigger conf_parser_section_toggle is used to toggle a section
+
+    /trigger addreplace conf_parser_subsection_run command "conf_parser_subsection_run;this command is not designed to be run manually"
+    /trigger set conf_parser_subsection_run conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_subsection_run regex "===.*===${if:${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}!=?${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}:${env:HOME}/config.md}===my_config /.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_section_and_sub /(\+0);[^,]+/${re:1}/my_section_and_sub /[^,;]+([,;]|$)/${if:${re:repl_index}<=${tg_argv1}?${re:0}}/my_section_and_sub /[;,]$//my_section_and_sub /.*/${split:-1,,,${my_section_and_sub}}/my_section_and_sub /.*/${split:1,#,strip_left,${split:1,+,,${split:1,;,,${my_section_and_sub}}}}/my_section /.*/${split:1,#,strip_left,${split:-1,;,,${my_section_and_sub}}}/my_subsection"
+    /trigger set conf_parser_subsection_run command "/exec -oc -nosw sed -nE '/^## +${my_section} *$/,/^---/{/^### +${my_subsection} *$/,/^(---|___)/{/    \/${tg_argv2}/s/^    //p}}' ${my_config}"
+
+the trigger conf_parser_subsection_run is used to run the code of a subsection
+
+    /trigger addreplace conf_parser_subsection_show command "conf_parser_subsection_show;this command is not designed to be run manually"
+    /trigger set conf_parser_subsection_show conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_subsection_show regex "===.*===${if:${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}!=?${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}:${env:HOME}/config.md}===my_config /.*/${plugins.var.group_tools.conf_parser.misc.index.content}/my_section_and_sub /(\+0);[^,]+/${re:1}/my_section_and_sub /[^,;]+([,;]|$)/${if:${re:repl_index}<=${tg_argv1}?${re:0}}/my_section_and_sub /[;,]$//my_section_and_sub /.*/${split:-1,,,${my_section_and_sub}}/my_section_and_sub /.*/${split:1,#,strip_left,${split:1,+,,${split:1,;,,${my_section_and_sub}}}}/my_section /.*/${split:1,#,strip_left,${split:-1,;,,${my_section_and_sub}}}/my_subsection"
+    /trigger set conf_parser_subsection_show command "/buffer clear exec.conf_parser;/exec -buffer conf_parser -nf -noln -name conf_parser_output -norc sed -nE '/^## +${my_section} *$/,/^---/{/^### +${my_subsection} *$/,/^(---|___)/p}' ${my_config}"
+
+the trigger conf_parser_subsection_show is used to show the content of a subsection
+
+    /trigger addreplace conf_parser_dependencies_colored modifier "conf_parser_dependencies_colored"
+    /trigger set conf_parser_dependencies_colored conditions "${tg_modifier_data} =~ ^[abcdefghijklmnopqrstuvwxyz0-9_]+$ && ${tg_string_nocolor} =~ ^([^ ,:]+, ?)*[^ ,:]+$"
+    /trigger set conf_parser_dependencies_colored regex "/.*/${tg_modifier_data}/my_type /^(plugin|script)s$/${re:1}/my_type /.*/${tg_string_nocolor}/my_dependencies / //my_dependencies /$/,/my_dependencies /([^,]+),/${define:my_color_category,${if:${my_type}=~^(plugin|script)$?${info:${my_type}_loaded,${re:1}}:${if:${my_type}==triggers?${length:${trigger.trigger.${re:1}.arguments}}:${if:${my_type}==secures?${if:${length:${sec.data.${re:1}}}!=}:${if:${my_type}==weechat?${if:${info:version_number}>=${info:version_number,${re:1}}}:2}}}}}${color:${if:${my_color_category}==2?*white:${if:${my_color_category}!=?*121:*163}}}${re:1}, /my_dependencies /, $//my_dependencies /.*/${my_dependencies}/tg_string"
+
+the trigger conf_parser_dependencies_colored is used to color the dependencies to help the user known if the dependencies are met or not
+
+    /trigger addreplace conf_parser_content_rebuild line "free;exec.exec.conf_parser;exec_cmd_conf_parser_output"
+    /trigger set conf_parser_content_rebuild conditions "${plugins.var.group_tools.conf_parser.misc.index.content} =~ ^(##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+,)*##[abcdefghijklmnopqrstuvwxyz0-9_]+\+[01](;###[abcdefghijklmnopqrstuvwxyz0-9_]+)+$"
+    /trigger set conf_parser_content_rebuild regex "/^(<!--|---|___|\*\*\*| *$).*/${if:${buffer.own_lines.last_line.data.message}!~^ $? }/message /^## +/${color:*31}Section: ${color:*white}/message /^### +/${color:*31}Subsection: ${color:*white}/message /^!\[WeeChat Screenshot\]\(([^)]+)\)/${color:*31}Screenshot: ${color:*white}${re:1}/message /^Dependencies: *$/${color:*31}${re:0}/message /^- +([abcdefghijklmnopqrstuvwxyz0-9_]+): +(.+)/· ${color:*31}${re:1}: ${modifier:conf_parser_dependencies_colored,${lower:${re:1}},${re:2}}/message ===^    (/.+)===    ${color:31}${hl:${re:1}}===message /\x1c/${color:31}/message"
+
+the trigger conf_parser_content_rebuild is used to format the content of config, a section or a subsection in the conf_buffer buffer
+
+    /trigger addreplace conf_parser command "conf_parser;;;;download|gui|rebuild|update"
+    /trigger set conf_parser conditions "${tg_argv_eol1} =~ ^(download|gui|rebuild|update)$"
+    /trigger set conf_parser regex "===.*===${if:${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}!=?${eval:${plugins.var.group_tools.conf_parser.misc.misc.filepath}}:${env:HOME}/config.md}===my_config /.*/${tg_argv_eol1}/my_cmds_to_run /$/ /my_cmds_to_run /^update /download rebuild gui /my_cmds_to_run ===download ===/exec -sh -norc -nosw curl -sfo ~/config.md https://gist.githubusercontent.com/pascalpoitras/8406501/raw/config.md;===my_cmds_to_run ===rebuild ===/wait 1s /exec -hsignal conf_parser_index_rebuild sed -E '/^##/!d' ${my_config};===my_cmds_to_run ===gui ===/wait 1s /exec -norc -buffer conf_parser -nf true===my_cmds_to_run"
+    /trigger set conf_parser command "/command -buffer core.weechat * /command -s ${my_cmds_to_run}"
+
+the trigger conf_parser is used to switch to the conf_parser buffer and to rebuild the index
+
+    /set weechat.buffer.exec.exec.conf_parser.short_name config
+    /set weechat.buffer.exec.exec.conf_parser.title Conf Parser  Input: (r) run the code in a section/subsection, (s) show the info and code of a section/subsection, (t) toggle a section
+
+some buffer properties
+
+    /bar addreplace conf_parser_line window,${buffer.full_name}==exec.exec.conf_parser left 0 0 conf_parser_item_line
+    /bar set conf_parser_line color_fg *31
+    /bar set conf_parser_line priority 1
+
+the conf_parser_line bar which display the conf_parser_item_line item
+
+    /bar addreplace conf_parser_index window,${buffer.full_name}==exec.exec.conf_parser left 15 1 conf_parser_item_index
+    /bar set conf_parser_index color_fg *31
+
+the conf_parser_index bar which display the conf_parser_item_index item
+
+    /key bindctxt mouse @item(conf_parser_item_line):button1* hsignal:conf_parser_item_line_click
+    /key bindctxt mouse @item(conf_parser_item_index):button1* hsignal:conf_parser_item_index_click
+
+bind button1 on both item
+
+    /conf_parser update
+
+download the config.md file, rebuild the index and launch the buffer
+
+conf_parser is a useful way to install stuff from this config, you can view the code with syntax highlighting, execute it, see if the dependencies are met and so on.
+
+___
+
+### dev_info
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/118900500-18e7e300-b8df-11eb-8159-5e65337a4a48.png)
+
+Dependencies:
+
+- WeeChat: 3.1
+- Plugins: exec, trigger
+- Triggers: utils_date_calc_days, utils_date_preferred
+<!-- ending list -->
+
+***
+
+    /trigger addreplace devinfo command "devinfo;infos about WeeChat;[-extra] [-match];-extra: displays extra informations like in how many day the next stable will be released${\n}-match: show if you are up-to-date${\n}${\n}This command retrieve infos about current and next stable version.${\n}${\n}Exemples:${\n}  Verbose output:${\n}    /${tg_trigger_name} -extra -match;-extra|-match|%*"
+    /trigger set devinfo conditions "${tg_argv_eol1} =~ ^(-(extra|match)( +|$))*$"
+    /trigger set devinfo regex "/.*/${tg_argv_eol1}/my_flags / +/_/my_flags /-//my_flags"
+    /trigger set devinfo command "/exec -norc -timeout 5 -hsignal devinfo_${my_flags} url:https://weechat.org/dev/info/all/"
+    
+    /trigger addreplace devinfo_hsignal hsignal "devinfo_*"
+    /trigger set devinfo_hsignal conditions "${err} == && ${info:python_version} !="
+    /trigger set devinfo_hsignal regex "/.*/${tg_signal}/my_flags /^devinfo_//my_flags /(?n)^stable:(.*)/${re:0}${if:${my_flags}=~match&&${info:version}!~-(dev|rc[0-9]+)? ${if:${re:1}==${info:version}?${color:121}(as mine!):${color:163}(mine is ${info:version})}}/out /(?n)^devel:(.*)/${re:0}${if:${my_flags}=~match&&${info:version}=~-(dev|rc[0-9]+)? ${if:${re:1}==${info:version}?${color:121}(as mine!):${color:163}(mine is ${info:version})}}/out /.*/${info:version_git}/my_git /^[^g]+g(.*)/${re:1}/my_git /(?n)^git:(.*)/${re:0}${if:${my_flags}=~match&&${info:version}=~-(dev|rc[0-9]+)? ${if:${re:1}=~^${my_git}?${color:121}(as mine!):${color:163}(mine is ${info:version_git})}}/out /(?n)^(stable_date:)(.*)/${re:1}${info:date_preferred,${re:2}}${if:${my_flags}=~extra? (since ${info:date_calc_days,${re:2}} days)}/out /(?n)^(next_stable_date:)(.*)/${re:1}${info:date_preferred,${re:2}}${if:${my_flags}=~extra? (${info:date_calc_days,${re:2}} days left)}/out /_/ /out /(?n)^([^:]+:)(.*)/${color:31}${re:1} ${color:default}${re:2}/out /\n/\x5cn/out"
+    /trigger set devinfo_hsignal command "/print -current -escape ${out}"
+
+The devinfo trigger create the devinfo command which is used to retrieve info from [https://weechat.org/dev/info/all/](https://weechat.org/dev/info/all/) and tell you if you're up-to-date (if you use the -match flag) and in how many days the next stable will be released (if you use the -extra flag)
+
+___
+
+***
+
+### translate
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/118900728-a88d9180-b8df-11eb-928e-9601b5db907e.gif)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: exec, trigger
+- Programs: translate-shell
+- Triggers: utils_search_server_buffer_ptr
+<!-- ending list -->
+
+***
+
+    /set plugins.var.translate_lang fr
+    /set weechat.buffer.irc.*.*fr.localvar_set_translate_lang en
+    
+    /trigger addreplace translate modifier weechat_print
+    /trigger set translate conditions "${tg_tags} =~ ,exec_cmd_translated_(text|lang),"
+    /trigger set translate regex "/.*/${color:*_31}${if:${tg_tags}=~,exec_cmd_translated_text,?Translation:Language}${color:reset}\t${tg_message_nocolor}/"
+    
+    /trigger addreplace translate_hsignal hsignal "translate_text;translate_lang;translate_dict"
+    /trigger set translate_hsignal conditions "${tg_signal} != translate_dict || ${tg_signal} == translate_dict && ${_chat_word} !="
+    /trigger set translate_hsignal regex "/.*/${split:1,,strip_left+strip_right+collapse_seps,${info:spell_dict,${_buffer}}}/my_main_spell_dict /.*/${split:1,_,,${env:LANG}}/my_env_lang /.*/${_buffer_localvar_translate_lang},${if:${_buffer_localvar_type}=~^(channel|private)$?${buffer[${info:search_server_buffer_ptr,${_buffer}}].local_variables.translate_lang}},${plugins.var.translate_lang},${my_main_spell_dict},${my_env_lang}/my_lang /.*/${split:1,,strip_left+strip_right+collapse_seps,${my_lang}}/my_lang /.*/${if:${tg_signal}=~text$?-brief -target ${my_lang}:${if:${tg_signal}=~lang$?-brief -id:-dictionary}}/my_options /.*/${if:${tg_signal}=~dict$?${_chat_word}:${_chat_focused_line}}/my_text"
+    /trigger set translate_hsignal command "/command -buffer ${_buffer_full_name} * /exec -norc -name ${tg_signal} trans -no-autocorrect -no-ansi -j ${my_options} -- ${my_text}"
+    
+    /key bindctxt cursor @chat:t /window ${_window_number};hsignal:translate_text;/cursor stop
+    /key bindctxt cursor @chat:l /window ${_window_number};hsignal:translate_lang;/cursor stop
+    /key bindctxt cursor @chat:d /window ${_window_number};hsignal:translate_dict;/cursor stop
+
+This let you translate text with the translate-shell program (package has the same name, at least for Debian). If you want to translate something someone said, press the middle mouse button on the message then press 't'. If you want to know the language of the text, press 'l' instead. Finally, you can press 'd' this will open a buffer and call translate-shell in dictionary mode. For the key 't', the target language is choosed like this: if there is a translate_lang localvar for the buffer, use the langage specified by this localvar. If not, check if the buffer is a channel or private and if so, check if there is a translate_lang localvar for the corresponding server buffer. If not, check if the option plugins.var.translate_lang exist. Otherwhise, check if there is a main spell dict set and if not use the LANG env. So, 1) buffer localvar 2) server buffer localvar 3) option 4) main spell dict 5) LANG environment variable
+
+___
+
+***
+
+### nick_validation
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/118900978-34072280-b8e0-11eb-9b01-9d8c4fdd2ba7.gif)
+
+Dependencies:
+
+- Plugins: irc, python, trigger
+<!-- ending list -->
+
+***
+
+    /trigger addreplace nick_validation modifier "input_text_display"
+    /trigger set nick_validation conditions "${tg_string_nocolor} =~ ^/nick . && ${buffer.plugin.name} == irc"
+    /trigger set nick_validation regex "/.*/${tg_string_nocolor}/my_nick ===^/nick (.+)===${re:1}===my_nick /^-all (.+)/${re:1}/my_nick ===.*===${if:${tg_string_nocolor}=~^/nick -all[ ]?${info:python_eval,infolist = weechat.infolist_get('irc_server', '', '')\nwhile weechat.infolist_next(infolist):\n if weechat.infolist_integer(infolist, 'is_connected'): print(weechat.infolist_string(infolist, 'name') + ' ')\nweechat.infolist_free(infolist)}:${server}} ===my_servers ===[^ ]+===\n${define:my_nicklen,${info:irc_server_isupport_value,${re:0},NICKLEN}}${if:${info:irc_is_nick,${re:0},${my_nick}}!=?${color:16,46}:${color:16,163}}${re:0} ${color:reverse} NICKLEN = ${calc:${my_nicklen} - ${length:${my_nick}}}/${my_nicklen}  CASEMAPPING = ${info:irc_server_isupport_value,${re:0},CASEMAPPING}  UTF8MAPPING = ${if:${info:irc_server_isupport_value,${re:0},UTF8MAPPING}!=?${info:irc_server_isupport_value,${re:0},UTF8MAPPING}:no}${color:16,default}===my_servers /.*/${re:0} ${my_servers}/tg_string"
+
+This trigger will give you hint about max nickname length and available character in nickname and will also tell you if the nick is valid or not. Also note that weechat has limited support for the rfc8265. For example, on an ergo server with utf8 nickname enabled, weechat correctly report the nickname é as valid but incorrectly report │ as valid. 
+
+___
+
+***
+
+### animated_logo
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/132591448-58ce5cb8-aa67-4615-8712-cb6fb014990e.gif)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: python, trigger
+<!-- ending list -->
+
+***
+
+    /trigger addoff logo_refresh timer "500;0;0"
+    /trigger set logo_refresh regex "/.*/${plugins.var.logo_colors}/my_colors /^,*$/24,31,121,163,229,white/my_colors ===.*===___       __         ______________        _____===my_first ===.*===__ |     / /___________  ____/__  /_______ __  /_===my_second ===.*===__ | /| / /_  _ \  _ \  /    __  __ \  __ `/  __/===my_third ===.*===__ |/ |/ / /  __/  __/ /___  _  / / / /_/ // /_===my_forth ===.*===____/|__/  \___/\___/\____/  /_/ /_/\__,_/ \__/===my_fifth /[^ ]/${color:*${split:random,,collapse_seps+strip_left+strip_right,${my_colors}}}${re:0}${color:reset}/my_first /[^ ]/${color:*${split:random,,collapse_seps+strip_left+strip_right,${my_colors}}}${re:0}${color:reset}/my_second /[^ ]/${color:*${split:random,,collapse_seps+strip_left+strip_right,${my_colors}}}${re:0}${color:reset}/my_third /[^ ]/${color:*${split:random,,collapse_seps+strip_left+strip_right,${my_colors}}}${re:0}${color:reset}/my_forth /[^ ]/${color:*${split:random,,collapse_seps+strip_left+strip_right,${my_colors}}}${re:0}${color:reset}/my_fifth"
+    /trigger set logo_refresh command "/print -free -newbuffer logo -y 0 ${my_first};/print -free -newbuffer logo -y 1 ${my_second};/print -free -newbuffer logo -y 2 ${my_third};/print -free -newbuffer logo -y 3 ${my_forth};/print -free -newbuffer logo -y 4 ${my_fifth}"
+
+    /trigger addreplace logo command "logo;WeeChat Animated Logo;start|stop|toggle|faster|slower || timer <time> [<align> [<number>]] || speed <speed> || color [\"<range>...\" [\"<name>...\"]]; start: start the animation${\n}  stop: stop the animation${\n}toggle: toggle the animation${\n}faster: increase the speed of the animation${\n}slower: decrease the speed of the animation${\n} timer: use a custom ms${\n} speed: use a preset${\n} color: specify the colors${\n}  time: number of ms${\n} align: alignment on second${\n}number: max number of calls${\n} speed: one of the following values: ultra, fast, normal, slow${\n} range: a range, eg: 3-35${\n}  name: name of a color${\n}${\n}Let's play with the WeeChat Animated ASCII logo!${\n}${\n}Exemples:${\n}  Start the timer !!${\n}    /logo start${\n}  Change the colors${\n}    /logo color \"\" \"24 31 121 163 229 white\";start|stop|toggle|faster|slower || timer 5000|4000|3000|2000|1000 || speed ultra|fast|normal|slow || color 0-255"
+    /trigger set logo conditions "${tg_argv_eol1} =~ (?-i)^(start|stop|toggle|faster|slower)$ || ${tg_argv_eol1} =~ (?-i)^timer +[0-9]+( +[0-9]+)?( +[0-9]+)?$ || ${tg_argv_eol1} =~ (?-i)^speed +(ultra|fast|normal|slow)$ || (${tg_shell_argv1} == color && ${tg_shell_argv2} =~ (?-i)^ *(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-6])-([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-6])( +|$))*$ && ${tg_shell_argc} <= 4)"
+    /trigger set logo regex "/.*/${tg_argv1}/my_action /start/enable/my_action /stop/disable/my_action /.*/${trigger.trigger.logo_refresh.arguments}/my_hook_args /.*/${split:1,;,,${my_hook_args}}/my_current_ms /.*/${if:${my_action}==timer?${tg_argv3}:${split:2,;,,${my_hook_args}}}/my_align_sec /.*/${if:${my_action}==timer?${tg_argv4}:${split:3,;,,${my_hook_args}}}/my_num_call /.*/${if:${my_action}==faster?${if:${my_current_ms}<=50?${my_current_ms}:${calc:${my_current_ms}-50}}:${if:${my_action}==slower?${calc:${my_current_ms}+50}:${if:${my_action}=~^(speed|timer)$?${tg_argv2}}}}/my_speed /ultra/5/my_speed /fast/50/my_speed /normal/500/my_speed /slow/1000/my_speed /.*/${if:${my_action}==color?${tg_shell_argv2}}/my_colors /([0-9]+)-([0-9]+)/${info:python_eval,print(' '.join(map(str, list(range(${re:1},${re:2})))))}/my_colors /$/${if:${my_action}==color? ${tg_shell_argv3}}/my_colors / +/,/my_colors /^,|,$//my_colors ===.*===/mute ${if:${my_action}=~(enable|disable|toggle)?/trigger ${my_action} logo_refresh:${if:${my_action}==color?/set plugins.var.logo_colors '${my_colors}':/trigger set logo_refresh arguments ${my_speed};${my_align_sec};${my_num_call}}}===my_cmds_to_run"
+    /trigger set logo command "/command -buffer core.weechat * /eval ${my_cmds_to_run}"
+
+    /key bindctxt mouse @chat(core.logo):button1 /logo toggle
+    /key bindctxt mouse @chat(core.logo):button1-gesture-left* /logo slower
+    /key bindctxt mouse @chat(core.logo):button1-gesture-right* /logo faster
+
+    /set weechat.buffer.core.logo.title Animated WeeChat Logo - Click on the logo to toggle the animation - Use gesture to increase and decrease the speed
+
+    /alias addreplace logo_xmas /logo color "" "34 46 40 124 160 196 white"
+    /alias addreplace logo_config /logo color "" "24 31 121 163 229 white"
+
+totally useless
+
+---
+---
+
+## Games
+
+***
+
+### memory
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/201568989-6795b27f-2d29-46d7-b42d-047d1102be9e.gif)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Plugins: python, trigger
+<!-- ending list -->
+
+***
+
+    /set weechat.buffer.core.memory_game.short_name memory
+    /set weechat.buffer.core.memory_game.clear 1
+    /set weechat.buffer.core.memory_game.title Memory Game  Keys: alt+space: show the grid bar, alt-n: new game, ←↑→↓: move the cursor  Input: space: flip card q: quit
+    
+    /set weechat.buffer.core.memory_game.key_bind_meta-n /play_memory 4 13
+    /set weechat.buffer.core.memory_game.key_bind_up /memory_game_keyboard up
+    /set weechat.buffer.core.memory_game.key_bind_down /memory_game_keyboard down
+    /set weechat.buffer.core.memory_game.key_bind_left /memory_game_keyboard left
+    /set weechat.buffer.core.memory_game.key_bind_right /memory_game_keyboard right
+    /set weechat.buffer.core.memory_game.key_bind_meta-space /bar toggle memory_game_choose_grid
+    /key bindctxt mouse @chat(core.memory_game):button1 hsignal:memory_game
+    /key bindctxt mouse @item(memory_game_choose_grid):button1-event-drag hsignal:memory_game_item_selected
+    /key bindctxt mouse @item(memory_game_choose_grid):button1* hsignal:memory_game_item_start
+
+    /item addreplace memory_game_choose_grid "" "${repeat:13,▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆${\n}}"
+    /bar addreplace memory_game_choose_grid window,${buffer.full_name}==core.memory_game top 0 1 memory_game_choose_grid
+    /bar set memory_game_choose_grid filling_top_bottom vertical
+    /bar set memory_game_choose_grid color_fg white
+    /bar toggle memory_game_choose_grid
+
+    /alias addreplace play_memory /memory_game $1 $2 🍅🍌🍒🍓🥒🍇🍉🍋🍍🫐🥕🥦🍭🍕🥨🥑🍐🫒🧅🥣🍿🍟🥔🫑🎂🍬🐵🐒🦍🦧🐶🦮🐩🐺🦊🦝🐈🦁🐯🐅🐆🐴🐎🦄🦓🦌🦬🐮🐂🐃🐮🐄🐷🐖🐗🐽🐏🐪🦙🦒🐘🦣🦏🦛🐭🐁🐀🐹🐇🐰🦫🦔🦇🐻🐨🐼🦥🦦🦨🦘🦡🦃🐔🐓🐤🐦🐧🦅🦆🦢🦉🦤🦩🦚🦜🐸🐊🐢🦎🐍🐲🦕🦖🐋🐬🦭🐟🐠🐡🦈🐙🐌🦋🐛🐜🐝🪲🐞🦗🦂🦟🪰🪱
+
+    /trigger addreplace memory_game command "memory_game;memory card game by r3m;<lines> <cols> <emojis>; lines: the number of lines${\n}  cols: the number of columns${\n}emojis: a list of emojis (must have enough emojis for the grid size you request)${\n}${\n}Create a grid of 4 lines and 13 cols (require 26 emojis for a grid of 52 cards):${\n}${\n}  /${tg_trigger_name} 4 13 🍅🍌🍒🍓🥒🍇🍉🍋🍍🫐🥕🥦🍭🍕🥨🥑🍐🫒🧅🥣🍿🍟🥔🫑🎂🍬;4 13 🍅🍌🍒🍓🥒🍇🍉🍋🍍🫐🥕🥦🍭🍕🥨🥑🍐🫒🧅🥣🍿🍟🥔🫑🎂🍬"
+    /trigger set memory_game conditions "${info:python_version} != && ${tg_argv_eol1} =~ ^[1-9][0-9]* +[1-9][0-9]* . && ${calc:${tg_argv1}*${tg_argv2}} <= ${calc:${length:${tg_argv3}}*2} && ${calc:${tg_argv1}*${tg_argv2}} =~ [02468]$ && ${calc:${length:${tg_argv3}}*2} == ${lengthscr:${tg_argv3}}"
+    /trigger set memory_game regex "/.*/${tg_argv1}/my_nb_lines /.*/${tg_argv2}/my_nb_cols /.*/${tg_argv3}/my_emojis /.*/${cutscr:${calc:${my_nb_lines}*${my_nb_cols}},,${my_emojis}}/my_emojis /.*/${info:python_eval,import random; emoji = list(\x22${repeat:2,${my_emojis}}\x22); random.shuffle(emoji); print(''.join(emoji))}/my_cards /./${re:0}${if:${calc:${re:repl_index}%${my_nb_cols}}==0?|}/my_cards /[^|]/${re:0},/my_cards /.*/${repeat:${calc:${my_nb_lines}*2-1},,}/my_cmds_to_run ===,===${if:${re:repl_index}=~[13579]$?${define:my_cards_line,${calc:${re:repl_index}//2+1}}/mute -core /set plugins.var.memory_game.cards_in_line_${my_cards_line} ${split:${my_cards_line},|,,${my_cards}};/mute -core /set plugins.var.memory_game.cards_state_in_line_${my_cards_line} ${repeat:${my_nb_cols},hidden,};:/print -newbuffer memory_game -free -y ${re:repl_index} ┃${repeat:${calc:${my_nb_cols}*3+1}, }┃;}===my_cmds_to_run ===$===/print -switch -newbuffer memory_game -free -y 0 ┏${repeat:${calc:${my_nb_cols}*3+1},━}┓;/print -newbuffer memory_game -free -y ${calc:${my_nb_lines}*2} ┗${repeat:${calc:${my_nb_cols}*3+1},━}┛;===my_cmds_to_run ===.*===/mute -core /unset -mask plugins.var.memory_game.*;/buffer clear memory_game;/mute -core /set plugins.var.memory_game.lines ${my_nb_lines};/mute -core /set plugins.var.memory_game.cols ${my_nb_cols};/mute -core /set plugins.var.memory_game.cursor_pos 1,1;${re:0}===my_cmds_to_run ===.*===${if:${plugins.var.memory_game.wait}!=?/print -core -error the card animation most complete, please try again in 2 seconds:${re:0}}===my_cmds_to_run"
+    /trigger set memory_game command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace memory_game_line_modified config "plugins.var.memory_game.cards_state_in_line_*;plugins.var.memory_game.cursor_line_*"
+    /trigger set memory_game_line_modified conditions "${plugins.var.memory_game.cards_state_in_line_${split:-1,_,,${tg_option}}} !="
+    /trigger set memory_game_line_modified regex "/.*/${split:-1,_,,${tg_option}}/my_cards_line /.*/${calc:${my_cards_line}*2-1}/my_buffer_line /.*/${plugins.var.memory_game.cursor_pos}/my_cursor_pos /.*/${plugins.var.memory_game.cards_state_in_line_${my_cards_line}}/my_value /.*/${my_value}/my_updated_line /([^,]+),/${if:${my_cards_line},${re:repl_index}==${my_cursor_pos}?${color:121}→: }${if:${re:1}==hidden?${color:,31}❓:${if:${re:1}==found?  :${color:,24}${split:${re:repl_index},,,${plugins.var.memory_game.cards_in_line_${my_cards_line}}}}}${color:reset}/my_updated_line /.*/┃${re:0} ┃/my_updated_line /.*/${repeat:${plugins.var.memory_game.lines},,}/my_win /,/${if:${re:repl_index}==${my_cards_line}?${my_value}:${plugins.var.memory_game.cards_state_in_line_${re:repl_index}}}/my_win /.*/${if:${re:0}=~^(found,)+$?1}/my_win ===$===/print -newbuffer memory_game -free -y ${my_buffer_line} ${my_updated_line};${if:${my_win}!=?/buffer clear memory_game;/print -newbuffer memory_game -free ${color:reset} ${color:*_121}YOU WON!}===my_cmds_to_run"
+    /trigger set memory_game_line_modified command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace memory_game_mouse hsignal memory_game
+    /trigger set memory_game_mouse conditions "${plugins.var.memory_game.wait} == && ${_chat_line_y} =~ [13579]$ && ${_chat_line_y} <= ${calc:${plugins.var.memory_game.lines}*2-1} && ${_chat_line_x} > 1 && ${_chat_line_x} <= ${calc:${plugins.var.memory_game.cols}*3} && ${calc:(${_chat_line_x}+1)%3} =~ ^[01]$ && ${split:${calc:(${_chat_line_x}+1)//3},,,${plugins.var.memory_game.cards_state_in_line_${calc:${_chat_line_y}//2+1}}} == hidden"
+    /trigger set memory_game_mouse regex "===.*===${calc:${_chat_line_y}//2+1}===my_cards_line ===.*===${calc:(${_chat_line_x}+1)//3}===my_cards_col"
+    /trigger set memory_game_mouse command "/memory_game_flip_card ${my_cards_line} ${my_cards_col}"
+
+    /trigger addreplace memory_game_input signal buffer_user_input_memory_game
+    /trigger set memory_game_input conditions "${plugins.var.memory_game.wait} == && ${tg_signal_data} =~ ^[ ]$ && ${split:${split:2,,,${plugins.var.memory_game.cursor_pos}},,,${plugins.var.memory_game.cards_state_in_line_${split:1,,,${plugins.var.memory_game.cursor_pos}}}} == hidden"
+    /trigger set memory_game_input regex "/.*/${split:1,,,${plugins.var.memory_game.cursor_pos}}/my_cards_line /.*/${split:2,,,${plugins.var.memory_game.cursor_pos}}/my_cards_col"
+    /trigger set memory_game_input command "/memory_game_flip_card ${my_cards_line} ${my_cards_col}"
+
+    /trigger addreplace memory_game_keyboard command memory_game_keyboard
+    /trigger set memory_game_keyboard conditions "${tg_argv_eol1} =~ ^(up|down|left|right)$"
+    /trigger set memory_game_keyboard regex "/.*/${tg_argv1}/my_key /.*/${plugins.var.memory_game.cursor_pos}/my_cursor_pos /.*/${split:1,,,${my_cursor_pos}}/my_cards_line /.*/${split:2,,,${my_cursor_pos}}/my_cards_col /.*/${plugins.var.memory_game.lines}/my_nb_lines /.*/${plugins.var.memory_game.cols}/my_nb_cols /.*/${if:${my_key}==left?${if:${my_cards_col}==1?${if:${my_cards_line}==1?${my_nb_lines}:${calc:${my_cards_line}-1}},${my_nb_cols}:${my_cards_line},${calc:${my_cards_col}-1}}:${if:${my_key}==right?${if:${my_cards_col}==${my_nb_cols}?${if:${my_cards_line}==${my_nb_lines}?1:${calc:${my_cards_line}+1}},1:${my_cards_line},${calc:${my_cards_col}+1}}:${if:${my_key}==up?${if:${my_cards_line}==1?${my_nb_lines},${if:${my_cards_col}==1?${my_nb_cols}:${calc:${my_cards_col}-1}}:${calc:${my_cards_line}-1},${my_cards_col}}:${if:${my_key}==down?${if:${my_cards_line}==${my_nb_lines}?1,${if:${my_cards_col}==${my_nb_cols}?1:${calc:${my_cards_col}+1}}:${calc:${my_cards_line}+1},${my_cards_col}}}}}}/my_new_cursor_pos"
+    /trigger set memory_game_keyboard command "/mute -core /set plugins.var.memory_game.cursor_pos ${my_new_cursor_pos};/mute -core /set plugins.var.memory_game.cursor_line_${split:1,,,${my_cursor_pos}} ${my_new_cursor_pos};/mute -core /set plugins.var.memory_game.cursor_line_${split:1,,,${my_new_cursor_pos}} ${my_new_cursor_pos}"
+
+    /trigger addreplace memory_game_flip_card command memory_game_flip_card
+    /trigger set memory_game_flip_card regex "/.*/${tg_argv1}/my_cards_line /.*/${tg_argv2}/my_cards_col /.*/${plugins.var.memory_game.second_card}/my_second_card /.*/${plugins.var.memory_game.cards_state_in_line_${my_cards_line}}/my_updated_states /[^,]+/${if:${re:repl_index}==${my_cards_col}?flipped:${re:0}}/my_updated_states /.*/${if:${my_second_card}!=?${split:1,,,${plugins.var.memory_game.card_1_pos}}}/my_first_card_line /.*/${if:${my_second_card}!=?${split:2,,,${plugins.var.memory_game.card_1_pos}}}/my_first_card_col /.*/${if:${my_second_card}!=?${if:${split:${my_cards_col},,,${plugins.var.memory_game.cards_in_line_${my_cards_line}}}==${split:${my_first_card_col},,,${plugins.var.memory_game.cards_in_line_${my_first_card_line}}}?found:hidden}}/my_result /.*/${if:${my_second_card}!=?${if:${my_first_card_line}==${my_cards_line}?${my_updated_states}:${plugins.var.memory_game.cards_state_in_line_${my_first_card_line}}}}/my_first_card_states /[^,]+/${if:${re:repl_index}==${my_first_card_col}?${my_result}:${re:0}}/my_first_card_states /.*/${if:${my_second_card}!=?${if:${my_first_card_line}==${my_cards_line}?${my_first_card_states}:${my_updated_states}}}/my_second_card_states /[^,]+/${if:${re:repl_index}==${my_cards_col}?${my_result}:${re:0}}/my_second_card_states ===$===/mute -core /set plugins.var.memory_game.cards_state_in_line_${my_cards_line} ${my_updated_states};${if:${my_second_card}==?/mute -core /set plugins.var.memory_game.second_card 1;/mute -core /set plugins.var.memory_game.card_1_pos ${my_cards_line},${my_cards_col}:/mute -core /unset plugins.var.memory_game.second_card;/mute -core /set plugins.var.memory_game.wait 1;/wait 2s /mute -core /set plugins.var.memory_game.cards_state_in_line_${my_first_card_line} ${my_first_card_states};/wait 2s /mute -core /set plugins.var.memory_game.cards_state_in_line_${my_cards_line} ${my_second_card_states};/wait 2s /mute -core /unset plugins.var.memory_game.wait}===my_cmds_to_run"
+    /trigger set memory_game_flip_card command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace memory_game_item_start hsignal memory_game_item_start
+    /trigger set memory_game_item_start conditions "${_bar_item_name} == ${_bar_item_name2} && ${_bar_item_line} == 0 && ${_bar_item_col} == 0 && ${_bar_item_line2} >= 0 && ${_bar_item_col2} >= 0"
+    /trigger set memory_game_item_start regex "/.*/${calc:${_bar_item_line2}+1}/my_nb_lines /.*/${calc:${_bar_item_col2}+1}/my_nb_cols ===.*===${calc:${my_nb_cols}//2${if:${my_nb_cols}=~[13579]?+1})}===my_nb_cols"
+    /trigger set memory_game_item_start command "/play_memory ${my_nb_lines} ${my_nb_cols};/mute -core /item addreplace memory_game_choose_grid ${\x22}${\x22} ${\x22}${repeat:13,▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆${raw:${\n}}}${\x22};/bar toggle memory_game_choose_grid"
+
+    /trigger addreplace memory_game_item_selected hsignal memory_game_item_selected
+    /trigger set memory_game_item_selected conditions "${_bar_item_name} == ${_bar_item_name2} && ${_bar_item_line} == 0 && ${_bar_item_col} == 0 && ${_bar_item_line2} >= 0 && ${_bar_item_col2} >= 0"
+    /trigger set memory_game_item_selected regex "/.*/${calc:${_bar_item_line2}+1}/my_nb_lines /.*/${calc:${_bar_item_col2}+1}/my_nb_cols ===.*===${calc:${my_nb_cols}//2${if:${my_nb_cols}=~[13579]?+1})}===my_nb_cols ===.*===${color:${if:${calc:${my_nb_lines}*${my_nb_cols}}=~[02468]$?121:163}}===my_color /.*/${my_color}▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆/my_selected_lines /[ ▆]/${if:${calc:${re:repl_index}-1-${_bar_item_col2}}==1?${color:reset}}${re:0}/my_selected_lines /$/${raw:${\x5cn}}/my_selected_lines /.*/${repeat:${calc:${_bar_item_line2}+1},${my_selected_lines}}/my_selected_lines /.*/▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆ ▆/my_not_selected_lines /.*/${repeat:${calc:13-(${_bar_item_line2}+1)},${my_not_selected_lines}${raw:${\x5cn}}}/my_not_selected_lines /.*/${my_selected_lines}${my_not_selected_lines}/my_colored_content" 
+    /trigger set memory_game_item_selected command "/command -buffer core.weechat * /mute -core /item addreplace memory_game_choose_grid ${\x22\x22} ${\x22}${my_colored_content}${\x22}"
+
+This game is not a full-blown memory card game. It only contains the core functionality. It doesn't track the time you took to complete the game. I made this game for two reasons. The first reason is because it was fun and educative, the second reason is to serve as a POC (proof of concept) of what can be accomplished using triggers.
+
+You can play with as many cards as you want (most be even and you must provide enough emojis) in the disposition you want (you specify the line and cards by line). 
+
+There is 2 ways to play:
+
+1) with the mouse
+2) with the arrows keys to move and space+enter to select the card
+
+___
+
+***
+
+### slider
+
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/200219898-f5e2df22-ed73-49d6-b5ba-28649c82790c.gif)
+
+Dependencies:
+
+- WeeChat: 4.1.0
+- Plugins: python, trigger
+<!-- ending list -->
+
+***
+
+    /set weechat.buffer.core.sliding_game.short_name sliding
+    /set weechat.buffer.core.sliding_game.clear 1
+    /set weechat.buffer.core.sliding_game.title Sliding Game  Keys: alt-n,1-9: new game, ←↑→↓: move a number  Input: q: quit
+    /repeat 7 /mute /set weechat.buffer.core.sliding_game.key_bind_meta-n,${calc:${repeat_index}+2} /sliding_game ${calc:${repeat_index}+2}
+    /set weechat.buffer.core.sliding_game.key_bind_up /sliding_game_keyboard up
+    /set weechat.buffer.core.sliding_game.key_bind_down /sliding_game_keyboard down
+    /set weechat.buffer.core.sliding_game.key_bind_right /sliding_game_keyboard right
+    /set weechat.buffer.core.sliding_game.key_bind_left /sliding_game_keyboard left
+    /key bindctxt mouse @chat(core.sliding_game):button1 hsignal:sliding_game
+
+    /trigger addreplace sliding_game command "sliding_game;sliding game by r3m;<number>;number: create a grid of number*number${\n}${\n}This is a sliding game (or also named the fifteen) for WeeChat. You need to reorder the number. You can create a 3x3, 4x4, 5x5, 6x6, 7x7, 8x8 and 9x9 grid. In fact you can play with a larger grid by modifying the conditions of the trigger but it is not recommended, it will be very slow.${\n}${\n}Play a 3x3 grid:${\n}${\n}  /${tg_trigger_name} 3;3"
+    /trigger set sliding_game conditions "${info:python_version} != && ${tg_argv_eol1} =~ ^[3-9]?$"
+    /trigger set sliding_game regex "/.*/${if:${tg_argv1}==?3:${tg_argv1}}/my_nb /.*/${info:python_eval,import random; number = list(map(str, range(0,${calc:${my_nb}*${my_nb}}))); random.shuffle(number); print(','.join(number))}/my_random_numbers /.*/${my_random_numbers}/my_inversions /[^,]+/${if:${re:0}==0?0:${info:sliding_game_how_many_inversion,${split:${re:repl_index},,keep_eol,${my_inversions}}}}/my_inversions /,/+/my_inversions /.*/${calc:${my_inversions}}/my_inversions /.*/${my_random_numbers}/my_space_line ===[^,]+===${if:${re:0}==0?${calc:(${re:repl_index}-1)//${my_nb}}}===my_space_line /,//my_space_line /.*/${if:${my_nb}=~[02468]$?${calc:${re:0}+${my_space_line}}:${re:0}}/my_inversions /,/,,/my_random_numbers /^([^,]+),,([^,]+),(.*),([^,]+),,([^,]+)$/${if:${my_nb}=~[02468]$&&${my_inversions}=~[02468]$||${my_nb}=~[13579]$&&${my_inversions}=~[13579]$?${if:,${re:1},${re:2},!~,0,?${re:2},${re:1},${re:3},${re:4},${re:5}:${re:1},${re:2},${re:3},${re:5},${re:4}}:${re:0}}/my_random_numbers /,+/,/my_random_numbers /(^|,)0/${re:1} /my_random_numbers ===.*===/buffer clear sliding_game;/mute -core /unset -mask plugins.var.sliding_game.*;/mute -core /set plugins.var.sliding_game.random_numbers \x22${my_random_numbers}\x22;/mute -core /set plugins.var.sliding_game.nb ${my_nb};/sliding_game_draw===my_cmds_to_run"
+    /trigger set sliding_game command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sliding_game_draw command sliding_game_draw
+    /trigger set sliding_game_draw regex "/.*/${plugins.var.sliding_game.nb}/my_nb /.*/${plugins.var.sliding_game.moves}/my_moves /^$/0/my_moves /.*/${plugins.var.sliding_game.random_numbers}/my_random_numbers /.*/${my_random_numbers}/my_inversions /(^|,) ($|,)//my_inversions /[^,]+/${info:sliding_game_how_many_inversion,${split:${re:repl_index},,keep_eol,${my_inversions}}}/my_inversions /,/+/my_inversions /.*/${calc:${my_inversions}}/my_inversions /.*/${if:${my_inversions}==&&${my_random_numbers}=~[ ]$?1:0}/my_win /.*/${repeat:${calc:${my_nb}*${my_nb}},,}/my_cmds_to_run ===,===${define:my_cell_value,${split:${re:repl_index},,,${my_random_numbers}}}${define:my_cell_line_number,${calc:(${re:repl_index}-1)//${my_nb}+1}}${define:my_cell_width,9}${define:my_cell_modulo_nb_cols,${calc:${re:repl_index}%${my_nb}}}${define:my_cell_value_modulo_nb_cols,${calc:${my_cell_value}%${my_nb}}}${if:${my_cell_modulo_nb_cols}==1?${if:${my_cell_line_number}==1?┏${repeat:${calc:${my_nb}-1},━━━━━━━━━┳}━━━━━━━━━┓;}┃}${if:${my_win}!=&&${my_cell_value}=~[ ]?${color:*_121}YOU WON!${color:reset} :${if:${my_cell_value_modulo_nb_cols}==1?${color:*white}:${color:*31}}${my_cell_value}${color:reset}${repeat:${calc:${my_cell_width}-${length:${my_cell_value}}}, }}┃${if:${my_cell_modulo_nb_cols}==0?;${repeat:2,┃${repeat:${my_nb},         ┃};}${if:${my_cell_line_number}!=${my_nb}?┣${repeat:${calc:${my_nb}-1},━━━━━━━━━╋}━━━━━━━━━┫:┗${repeat:${calc:${my_nb}-1},━━━━━━━━━┻}━━━━━━━━━┛;${color:31}Moves: ${color:reset}${my_moves}};}===my_cmds_to_run ===[^;]+===/print -newbuffer sliding_game -free -y ${calc:${re:repl_index}-1} ${re:0}===my_cmds_to_run ===$===${if:${my_win}!=?/mute -core /set plugins.var.sliding_game.win 1}===my_cmds_to_run" 
+    /trigger set sliding_game_draw command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sliding_game_how_many_inversion info sliding_game_how_many_inversion
+    /trigger set sliding_game_how_many_inversion regex "/.*/${tg_arguments}/my_number /,0//my_number /.*/${my_number}/my_remaining /^([^,]+).*/${re:1}/my_number /^[^,]+(.*)/${re:1}/my_remaining /[^,]+/${if:${my_number}>${re:0}?.}/my_remaining /,//my_remaining /.*/${length:${my_remaining}}/tg_info"
+
+    /trigger addreplace sliding_game_mouse hsignal sliding_game
+    /trigger set sliding_game_mouse conditions "${define:my_nb_lines_and_cols,${plugins.var.sliding_game.nb}}${plugins.var.sliding_game.win} == && ${_chat_line_x} < ${calc:${my_nb_lines_and_cols}*9+${my_nb_lines_and_cols}} && ${_chat_line_x} !~ 0$ && ${_chat_line_y} > 0 && ${_chat_line_y} < ${calc:${my_nb_lines_and_cols}*3+${my_nb_lines_and_cols}} && ${calc:${_chat_line_y}%4} != 0"
+    /trigger set sliding_game_mouse regex "/.*/${plugins.var.sliding_game.nb}/my_nb ===.*===${calc:${_chat_line_y}//4+1}===my_cell_line ===.*===${calc:${_chat_line_x}//10+1}===my_cell_col ===.*===${calc:(${my_cell_line} - 1)*${my_nb}+${my_cell_col}}===my_cell_index /.*/${plugins.var.sliding_game.random_numbers}/my_random_numbers /.*/${split:${my_cell_index},,,${my_random_numbers}}/my_cell_value /.*/${info:sliding_game_look_around,${my_nb},${my_cell_line},${my_cell_col},${my_cell_index},space,${my_random_numbers}}/my_space_relative_position / /${if:${my_space_relative_position}!=?-: }/my_random_numbers /[^,]+/${if:${re:0}==${my_cell_value}&&${my_space_relative_position}!=? :${re:0}}/my_random_numbers /-/${my_cell_value}/my_random_numbers ===$===/mute -core /set plugins.var.sliding_game.random_numbers \x22${my_random_numbers}\x22${if:${my_space_relative_position}!=?;/mute -core /set plugins.var.sliding_game.moves ${calc:${plugins.var.sliding_game.moves}+1};/sliding_game_draw}===my_cmds_to_run"
+    /trigger set sliding_game_mouse command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sliding_game_keyboard command sliding_game_keyboard
+    /trigger set sliding_game_keyboard conditions "${plugins.var.sliding_game.win} == && ${buffer.full_name} == core.sliding_game && ${tg_argv_eol1} =~ ^(up|down|left|right)$"
+    /trigger set sliding_game_keyboard regex "/.*/${tg_argv1}/my_key /.*/${plugins.var.sliding_game.nb}/my_nb /.*/${plugins.var.sliding_game.random_numbers}/my_random_numbers /.*/${my_random_numbers}/my_space_cell_index /[^,]+/${if:${re:0}=~[ ]?${re:repl_index}}/my_space_cell_index /,//my_space_cell_index ===.*===${calc:(${my_space_cell_index}-1)//${my_nb}+1}===my_space_cell_line /.*/${calc:${my_space_cell_index}%${my_nb}}/my_space_cell_col /.*/${if:${my_key}==up?below:${if:${my_key}==down?above:${if:${my_key}==left?right:left}}}/my_direction /.*/${info:sliding_game_look_${my_direction},${my_nb},${my_space_cell_line},${my_space_cell_col},${my_space_cell_index},number,${my_random_numbers}}/my_number_cell_value / /${if:${my_number_cell_value}!=?-: }/my_random_numbers /[^,]+/${if:${re:0}==${my_number_cell_value}&&${my_number_cell_value}!=? :${re:0}}/my_random_numbers /-/${my_number_cell_value}/my_random_numbers ===$===/mute -core /set plugins.var.sliding_game.random_numbers \x22${my_random_numbers}\x22${if:${my_number_cell_value}!=?;/mute -core /set plugins.var.sliding_game.moves ${calc:${plugins.var.sliding_game.moves}+1};/sliding_game_draw}===my_cmds_to_run"
+    /trigger set sliding_game_keyboard command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sliding_game_number_input signal buffer_user_input_sliding_game
+    /trigger set sliding_game_number_input conditions "${plugins.var.sliding_game.win} == && ${tg_signal_data} =~ ^[1-9][0-9]*$ && ${tg_signal_data} < ${calc:${plugins.var.sliding_game.nb}*${plugins.var.sliding_game.nb}}"
+    /trigger set sliding_game_number_input regex "/.*/${tg_signal_data}/my_input /.*/${plugins.var.sliding_game.nb}/my_nb /.*/${plugins.var.sliding_game.random_numbers}/my_random_numbers /.*/${my_random_numbers}/my_number_cell_index /[^,]+/${if:${re:0}=~^${my_input}$?${re:repl_index}}/my_number_cell_index /,//my_number_cell_index ===.*===${calc:(${my_number_cell_index}-1)//${my_nb}+1}===my_number_cell_line /.*/${calc:${my_number_cell_index}%${my_nb}}/my_number_cell_col /.*/${info:sliding_game_look_around,${my_nb},${my_number_cell_line},${my_number_cell_col},${my_number_cell_index},space,${my_random_numbers}}/my_space_relative_position / /${if:${my_space_relative_position}!=?-: }/my_random_numbers /[^,]+/${if:${re:0}==${my_input}&&${my_space_relative_position}!=? :${re:0}}/my_random_numbers /-/${my_input}/my_random_numbers ===$===/mute -core /set plugins.var.sliding_game.random_numbers \x22${my_random_numbers}\x22${if:${my_space_relative_position}!=?;/mute -core /set plugins.var.sliding_game.moves ${calc:${plugins.var.sliding_game.moves}+1};/sliding_game_draw}===my_cmds_to_run"
+    /trigger set sliding_game_number_input command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sliding_game_look_around info sliding_game_look_around;sliding_game_look_above;sliding_game_look_below;sliding_game_look_left;sliding_game_look_right
+    /trigger set sliding_game_look_around regex "/.*/${split:1,,,${tg_arguments}}/my_nb /.*/${split:2,,,${tg_arguments}}/my_cell_line /.*/${split:3,,,${tg_arguments}}/my_cell_col /.*/${split:4,,,${tg_arguments}}/my_cell_index /.*/${if:${split:5,,,${tg_arguments}}==space?[ ]:.}/my_search_for /.*/${split:6,,keep_eol,${tg_arguments}}/my_random_numbers /.*/${if:${my_cell_line}>1?${split:${calc:${my_cell_index}-${my_nb}},,,${my_random_numbers}}}/my_above_cell_value /.*/${split:${calc:${my_cell_index}+${my_nb}},,,${my_random_numbers}}/my_below_cell_value /.*/${if:${calc:${my_cell_col}%${my_nb}}!=1?${split:${calc:${my_cell_index}-1},,,${my_random_numbers}}}/my_left_cell_value /.*/${if:${calc:${my_cell_col}%${my_nb}}!=0?${split:${calc:${my_cell_index}+1},,,${my_random_numbers}}}/my_right_cell_value /.*/${if:${tg_info_name}!~around?${my_${split:-1,_,,${tg_info_name}}_cell_value}:${if:${my_above_cell_value}=~${my_search_for}?above:${if:${my_below_cell_value}=~${my_search_for}?below:${if:${my_left_cell_value}=~${my_search_for}?left:${if:${my_right_cell_value}=~${my_search_for}?right}}}}}/tg_info"
+
+This game is not a full-blown sliding game. It only contains the core functionality. It doesn't track the time you took to complete the game. I made this game for two reasons. The first reason is because it was fun and educative, the second reason is to serve as a POC (proof of concept) of what can be accomplished using triggers.
+
+you can play grid of 3x3, 4x4, 5x5, 6x6, 7x7, 8x8 and 9x9. in fact it is possible to play with much larger grid but it will be slow. It is possible but very unlikely that you start with an already won game, in this case, just press the shortcut again to start a new game. Since it's very unlikely I prefer to keep the code smaller, faster and especially less complicated.
+
+There is three way to play.
+
+1. Using the mouse (Click on the number you want to move)
+2. Using the arrows (up to move the number below the empty cell in the cell, and so on)
+3. Using the input (enter the number you want to move then press enter)
+
+___
+
+***
+
+### sudoku
+    
+![WeeChat Screenshot](https://user-images.githubusercontent.com/3608314/263546413-988ab213-26be-40ea-a503-0c51a9ea3e07.gif)
+
+Dependencies:
+
+- WeeChat: 4.4.0
+- Programs: qqwing
+- Plugins: exec, trigger
+<!-- ending list -->
+
+***
+
+    /set weechat.buffer.core.sudoku_game.short_name sudoku
+    /set weechat.buffer.core.sudoku_game.clear 1
+    /set weechat.buffer.core.sudoku_game.title Sudoku Game  Keys: alt-n,0-4: new game, alt-s: show solution, ←↑→↓|left-click: move, 1-9: insert, 0|backspace: remove a digit  Input: q: quit
+    
+    /set weechat.buffer.core.sudoku_game.key_bind_meta-n,0 /sudoku_game play any
+    /set weechat.buffer.core.sudoku_game.key_bind_meta-n,1 /sudoku_game play simple
+    /set weechat.buffer.core.sudoku_game.key_bind_meta-n,2 /sudoku_game play easy
+    /set weechat.buffer.core.sudoku_game.key_bind_meta-n,3 /sudoku_game play intermediate
+    /set weechat.buffer.core.sudoku_game.key_bind_meta-n,4 /sudoku_game play expert
+    /set weechat.buffer.core.sudoku_game.key_bind_meta-s /sudoku_game_show_solution
+    /set weechat.buffer.core.sudoku_game.key_bind_up /sudoku_game_keyboard_move up
+    /set weechat.buffer.core.sudoku_game.key_bind_down /sudoku_game_keyboard_move down
+    /set weechat.buffer.core.sudoku_game.key_bind_right /sudoku_game_keyboard_move right
+    /set weechat.buffer.core.sudoku_game.key_bind_left /sudoku_game_keyboard_move left
+    /set weechat.buffer.core.sudoku_game.key_bind_backspace /sudoku_game_keyboard_insert 0
+    /repeat 10 /mute /set weechat.buffer.core.sudoku_game.key_bind_${repeat_index0} /sudoku_game_keyboard_insert ${repeat_index0}
+    /key bindctxt mouse @chat(core.sudoku_game):button1 hsignal:sudoku_game_mouse_move
+
+    /alias addreplace sudoku_game_show_solution /mute /set plugins.var.sudoku_game.animation 1;/repeat -interval 50ms 81 /eval -s /sudoku_game_keyboard_insert ${split:${split:2,,,${plugins.var.sudoku_game.cursor_pos}},|,strip_left,${split:${split:1,,,${plugins.var.sudoku_game.cursor_pos}},,,${plugins.var.sudoku_game.solved}}}\;/sudoku_game_keyboard_move right${if:${repeat_last}!=?\;/mute /unset plugins.var.sudoku_game.animation}
+    
+    /trigger addreplace sudoku_game command "sudoku_game;sudoku for weechat using qqwing as generator and solver;play <difficulty> || debug;      play: play sudoku${\n}     debug: static puzzle, useful for debugging${\n}difficulty: simple, easy, intermediate, expert or any;play simple|easy|intermediate|expert|any || debug"
+    /trigger set sudoku_game conditions "${plugins.var.sudoku_game.animation} == && ${tg_argv_eol1} =~ (?-i)^play +(simple|easy|intermediate|expert|any)$ || ${tg_argv_eol1} =~ (?-i)^debug$"
+    /trigger set sudoku_game regex "/.*/${tg_argv1}/my_action /.*/${if:${my_action}==play?${tg_argv2}:simple}/my_difficulty /.*/${if:${my_action}==debug?debug}/my_hsignal_args ===.*===/buffer clear sudoku_game;/mute -core /unset -mask plugins.var.sudoku_game.*;/mute -core /set plugins.var.sudoku_game.cursor_pos 1,1;/mute -core /set plugins.var.sudoku_game.difficulty ${my_difficulty};/exec -hsignal sudoku_game_reply_${my_hsignal_args} qqwing --generate 1 --difficulty ${my_difficulty} --one-line --solution===my_cmds_to_run"
+    /trigger set sudoku_game command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sudoku_game_reply hsignal "sudoku_game_reply_*"
+    /trigger set sudoku_game_reply conditions "${err} == && ${out} =~ ^[1-9.]{81}${\n}[1-9]{81}${\n}$ || ${tg_signal} =~ _debug$"
+    /trigger set sudoku_game_reply regex "/.*/${if:${tg_signal}=~_debug$?..9.4.....415..7.8.....1...5...7.....3.2.8....87.9......27......1..843.......35..\n259847163641532798873961245524376981936218457187495632362759814715684329498123576:${out}}/my_output /.*/${split:1,\n,,${my_output}}/my_unsolved /\./ /my_unsolved /.*/${my_unsolved}/my_unsolved_col /.*/${my_unsolved}/my_unsolved_block /./${define:my_col,${calc:(${re:repl_index}-1)%9+1}}|${re:0}${if:${my_col}==9?,}/my_unsolved /./${define:my_col,${calc:(${re:repl_index}-1)%9+1}}${define:my_col_${my_col}_content,${my_col_${my_col}_content}|${re:0}${if:${length:${my_col_${my_col}_content}}==16?,}}${if:${re:repl_index}==81?${my_col_1_content}${my_col_2_content}${my_col_3_content}${my_col_4_content}${my_col_5_content}${my_col_6_content}${my_col_7_content}${my_col_8_content}${my_col_9_content}}/my_unsolved_col ===.===${define:my_row,${calc:(${re:repl_index}-1)//9+1}}${define:my_col,${calc:(${re:repl_index}-1)%9+1}}${define:my_block_row,${calc:(${my_row}-1)//3+1}}${define:my_block_col,${calc:(${my_col}-1)//3+1}}${define:my_block,${calc:(${my_block_row}-1)*3+${my_block_col}}}${define:my_block_${my_block}_content,${my_block_${my_block}_content}|${re:0}${if:${length:${my_block_${my_block}_content}}==16?,}}${if:${re:repl_index}==81?${my_block_1_content}${my_block_2_content}${my_block_3_content}${my_block_4_content}${my_block_5_content}${my_block_6_content}${my_block_7_content}${my_block_8_content}${my_block_9_content}}===my_unsolved_block /.*/${split:2,\n,,${my_output}}/my_solved /./${define:my_col,${calc:(${re:repl_index}-1)%9+1}}|${re:0}${if:${my_col}==9?,}/my_solved ===.*===/mute -core /set plugins.var.sudoku_game.unsolved_orig '${my_unsolved}';/mute -core /set plugins.var.sudoku_game.unsolved '${my_unsolved}';/mute -core /set plugins.var.sudoku_game.unsolved_col '${my_unsolved_col}';/mute -core /set plugins.var.sudoku_game.unsolved_block '${my_unsolved_block}';/mute -core /set plugins.var.sudoku_game.solved ${my_solved};/sudoku_game_draw===my_cmds_to_run"
+    /trigger set sudoku_game_reply command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sudoku_game_draw command sudoku_game_draw
+    /trigger set sudoku_game_draw conditions "${tg_argv_eol1} =~ (?-i)^(congrats)?$"
+    /trigger set sudoku_game_draw regex "/.*/${tg_argv1}/my_congrats /.*/${color:24}┏━━━┳━━━┳━━━${color:*39}┳${color:24}━━━┳━━━┳━━━${color:*39}┳${color:24}━━━┳━━━┳━━━┓/my_grid_top /.*/${color:24}┗━━━┻━━━┻━━━${color:*39}┻${color:24}━━━┻━━━┻━━━${color:*39}┻${color:24}━━━┻━━━┻━━━┛/my_grid_bottom /.*/${color:24}┣━━━╋━━━╋━━━${color:*39}╋${color:24}━━━╋━━━╋━━━${color:*39}╋${color:24}━━━╋━━━╋━━━┫/my_grid_lines_separator /.*/${color:*39}┣━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━╋━━━┫/my_grid_blocks_separator /.*/${plugins.var.sudoku_game.unsolved}/my_unsolved /.*/${plugins.var.sudoku_game.unsolved_orig}/my_unsolved_orig /.*/${plugins.var.sudoku_game.unsolved_col}/my_unsolved_col /.*/${plugins.var.sudoku_game.unsolved_block}/my_unsolved_block /.*/${plugins.var.sudoku_game.cursor_pos}/my_cursor_pos ===\|([1-9 ])===${define:my_row,${calc:(${re:repl_index}-1)//9+1}}${define:my_col,${calc:(${re:repl_index}-1)%9+1}}${define:my_block_row,${calc:(${my_row}-1)//3+1}}${define:my_block_col,${calc:(${my_col}-1)//3+1}}${define:my_block,${calc:(${my_block_row}-1)*3+${my_block_col}}}${color:${if:${my_col}=~^(4|7)$?*39:24}}┃${if:${my_row},${my_col}==${my_cursor_pos}?${color:24,24}} ${color:reset}${color:${if:${re:1}=~[1-9]&&${split:${my_row},,,${my_unsolved}}=~${re:1}.*${re:1}||${split:${my_col},,,${my_unsolved_col}}=~${re:1}.*${re:1}||${split:${my_block},,,${my_unsolved_block}}=~${re:1}.*${re:1}?163:${if:${split:${my_col},|,strip_left,${split:${my_row},,,${my_unsolved_orig}}}=~[1-9]?121:white}}}${re:1}${if:${my_row},${my_col}==${my_cursor_pos}?${color:24,24}} ${color:reset}===my_unsolved /.*/${repeat:19,,}/my_cmds_to_run ===,===${define:my_grid_line,${re:repl_index}}${define:my_buffer_line,${calc:${re:repl_index}-1}}${define:my_digit_line,${calc:${re:repl_index}//2}}/print -newbuffer sudoku_game -free -y ${my_buffer_line} ${if:${my_grid_line}==1?${my_grid_top}:${if:${my_grid_line}==19?${my_grid_bottom}:${if:${my_grid_line}=~^(7|13)$?${my_grid_blocks_separator}:${if:${my_grid_line}=~[13579]$?${my_grid_lines_separator}:${split:${my_digit_line},,,${my_unsolved}}${color:24}┃}}}};===my_cmds_to_run ===$===/print -newbuffer sudoku_game -free -y 19 ${if:${my_congrats}!=?${color:reset}${repeat:14, }${color:*_121}YOU WON!:${color:121}Difficulty: ${plugins.var.sudoku_game.difficulty}}===my_cmds_to_run"
+    /trigger set sudoku_game_draw command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+    /trigger addreplace sudoku_game_keyboard_move command sudoku_game_keyboard_move
+    /trigger set sudoku_game_keyboard_move conditions "${plugins.var.sudoku_game.win} == && ${buffer.full_name} == core.sudoku_game && ${tg_argv_eol1} =~ (?-i)^(up|down|left|right)$"
+    /trigger set sudoku_game_keyboard_move regex "/.*/${tg_argv1}/my_key /.*/${plugins.var.sudoku_game.cursor_pos}/my_cursor_pos /.*/${split:1,,,${my_cursor_pos}}/my_row /.*/${split:2,,,${my_cursor_pos}}/my_col /.*/${if:${my_key}==left?${if:${my_col}==1?${if:${my_row}==1?9:${calc:${my_row}-1}},9:${my_row},${calc:${my_col}-1}}:${if:${my_key}==right?${if:${my_col}==9?${if:${my_row}==9?1:${calc:${my_row}+1}},1:${my_row},${calc:${my_col}+1}}:${if:${my_key}==up?${if:${my_row}==1?9,${if:${my_col}==1?9:${calc:${my_col}-1}}:${calc:${my_row}-1},${my_col}}:${if:${my_key}==down?${if:${my_row}==9?1,${if:${my_col}==9?1:${calc:${my_col}+1}}:${calc:${my_row}+1},${my_col}}}}}}/my_new_cursor_pos"
+    /trigger set sudoku_game_keyboard_move command "/mute -core /set plugins.var.sudoku_game.cursor_pos ${my_new_cursor_pos};/sudoku_game_draw"
+
+    /trigger addreplace sudoku_game_mouse_move hsignal sudoku_game_mouse_move
+    /trigger set sudoku_game_mouse_move conditions "${plugins.var.sudoku_game.win} == && ${_chat_line_y} > 0 && ${_chat_line_y} < 18 && ${_chat_line_y} =~ [13579]$ && ${_chat_line_x} > 0 && ${_chat_line_x} < 36 && ${calc:${_chat_line_x}%4} !="
+    /trigger set sudoku_game_mouse_move regex "===.*===${calc:${_chat_line_y}//2+1}===my_row ===.*===${calc:${_chat_line_x}//4+1}===my_col"
+    /trigger set sudoku_game_mouse_move command "/mute -core /set plugins.var.sudoku_game.cursor_pos ${my_row},${my_col};/sudoku_game_draw"
+
+    /trigger addreplace sudoku_game_keyboard_insert command sudoku_game_keyboard_insert
+    /trigger set sudoku_game_keyboard_insert conditions "${plugins.var.sudoku_game.win} == && ${split:${split:2,,,${plugins.var.sudoku_game.cursor_pos}},|,strip_left,${split:${split:1,,,${plugins.var.sudoku_game.cursor_pos}},,,${plugins.var.sudoku_game.unsolved_orig}}} =~ [ ]"
+    /trigger set sudoku_game_keyboard_insert regex "/.*/${tg_argv1}/my_new_value /0/ /my_new_value /.*/${plugins.var.sudoku_game.cursor_pos}/my_cursor_pos /.*/${split:1,,,${my_cursor_pos}}/my_row /.*/${split:2,,,${my_cursor_pos}}/my_col ===.*===${calc:(${my_row}-1)//3+1}===my_block_row ===.*===${calc:(${my_col}-1)//3+1}===my_block_col /.*/${calc:(${my_block_row}-1)*3+${my_block_col}}/my_block /.*/${calc:(${my_row}-1)%3+1}/my_row_relative_to_block /.*/${calc:(${my_col}-1)%3+1}/my_col_relative_to_block /.*/${calc:(${my_row_relative_to_block}-1)*3+${my_col_relative_to_block}}/my_cell_relative_to_block /.*/${plugins.var.sudoku_game.unsolved}/my_unsolved /.*/${split:${my_row},,,${my_unsolved}}/my_updated_row /\|([1-9 ])/|${if:${re:repl_index}==${my_col}?${my_new_value}:${re:1}}/my_updated_row /[^,]+/${if:${re:repl_index}==${my_row}?${my_updated_row}:${re:0}}/my_unsolved /.*/${plugins.var.sudoku_game.unsolved_col}/my_unsolved_col /.*/${split:${my_col},,,${my_unsolved_col}}/my_updated_col /\|([1-9 ])/|${if:${re:repl_index}==${my_row}?${my_new_value}:${re:1}}/my_updated_col /[^,]+/${if:${re:repl_index}==${my_col}?${my_updated_col}:${re:0}}/my_unsolved_col /.*/${plugins.var.sudoku_game.unsolved_block}/my_unsolved_block /.*/${split:${my_block},,,${my_unsolved_block}}/my_updated_block /\|([1-9 ])/|${if:${re:repl_index}==${my_cell_relative_to_block}?${my_new_value}:${re:1}}/my_updated_block /[^,]+/${if:${re:repl_index}==${my_block}?${my_updated_block}:${re:0}}/my_unsolved_block /.*/${if:${my_unsolved}==${plugins.var.sudoku_game.solved}?1:0}/my_win ===.*===/mute -core /set plugins.var.sudoku_game.unsolved '${my_unsolved}';/mute -core /set plugins.var.sudoku_game.unsolved_col '${my_unsolved_col}';/mute -core /set plugins.var.sudoku_game.unsolved_block '${my_unsolved_block}';/sudoku_game_draw ${if:${my_win}!=?congrats;/mute -core /set plugins.var.sudoku_game.win 1}===my_cmds_to_run"
+    /trigger set sudoku_game_keyboard_insert command "/command -buffer core.weechat * /eval -s ${my_cmds_to_run}"
+
+This is a basic sudoku game, support difficulty, keyboard+mouse, color the digit in a different color if it appears more than once in the same row, column or block. You need to install qqwing which is the generator/solver used here. This project is awesome and I would not have achieve this if I had to wrote the generator/solver myself!
+
+---
+---
+
+## Aliases
+
+***
+
+### useful
+
+Dependencies:
+
+- WeeChat: 4.4.0
+<!-- ending list -->
+
+***
+
+    /alias addreplace cq /allpv /buffer close
+
+___
+
+***
+
+### fun
+
+Dependencies:
+
+- WeeChat: 4.4.0
+<!-- ending list -->
+
+***
+
+    /alias addreplacecompletion %(irc_channel)|%(nick)|%* slap /me slaps $* around a bit with a large trout
+    /alias addreplacecompletion %(irc_channel)|%(nick)|%* fu /say (╹◡╹)凸 $*
+
+---
+---
+
+## Keys
+
+***
+
+### history
+
+***
+
+    /key bind up /input history_global_previous
+    /key bind down /input history_global_next
+
+---
+---
+
+## Filters
+
+***
+
+### smart
+
+***
+
+    /set irc.look.smart_filter on
+    /filter add irc_smart * irc_smart_filter *
+
+---
+---
+
+## Options
+
+***
+
+### weechat
+
+***
+
+    /set weechat.look.bar_more_down ""
+    /set weechat.look.bar_more_up ""
+    /set weechat.look.bar_more_left "…"
+    /set weechat.look.bar_more_right "…"
+    /set weechat.look.buffer_notify_default message
+    /set weechat.look.buffer_time_format "${color:245}%H${color:253}%M"
+    /set weechat.look.color_inactive_message off
+    /set weechat.look.color_inactive_prefix off
+    /set weechat.look.color_inactive_prefix_buffer off
+    /set weechat.look.color_inactive_window off
+    /set weechat.look.day_change_message_1date "── %a, %d %b %Y ──"
+    /set weechat.look.day_change_message_2dates "── %%a, %%d %%b %%Y (%a, %d %b %Y) ──"
+    /set weechat.look.highlight *pascalpoitras*
+    /set weechat.look.hotlist_add_conditions "${away} || ${buffer.num_displayed} == 0"
+    /set weechat.look.item_buffer_filter "•"
+    /set weechat.look.prefix_align_min 0
+    /set weechat.look.prefix_align_max 10
+    /set weechat.look.prefix_join "▬▬▶"
+    /set weechat.look.prefix_quit "◀▬▬"
+    /set weechat.look.prefix_suffix "│"
+    /set weechat.look.read_marker_string "─"
+    /set weechat.look.separator_horizontal ""
+
+    /set weechat.color.bar_more 229
+    /set weechat.color.chat_highlight lightred
+    /set weechat.color.chat_highlight_bg default
+    /set weechat.color.chat_host 24
+    /set weechat.color.chat_nick_colors "cyan,magenta,green,brown,lightblue,lightcyan,lightmagenta,lightgreen,blue"
+    /set weechat.color.chat_prefix_join 121
+    /set weechat.color.chat_prefix_more 24
+    /set weechat.color.chat_prefix_quit 131
+    /set weechat.color.chat_prefix_suffix 24
+    /set weechat.color.chat_read_marker 24
+    /set weechat.color.chat_time 239
+    /set weechat.color.chat_delimiters 24
+    /set weechat.color.eval_syntax_colors "229,179,228,178"
+    /set weechat.color.separator 24
+    /set weechat.color.status_data_highlight 163
+    /set weechat.color.status_data_msg 229
+    /set weechat.color.status_data_private 121
+    /set weechat.color.status_more *white
+    /set weechat.color.status_name 121
+    /set weechat.color.status_name_tls 121
+    /set weechat.color.status_time white
+    /set weechat.color.status_nicklist_count white
+    /set weechat.color.status_number white
+
+    /set weechat.history.max_buffer_lines_number 1024
+
+    /set weechat.buffer.core.weechat.notify 3
+    /set weechat.buffer.irc.server.*.notify 3
+
+---
+---
