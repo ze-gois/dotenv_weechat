@@ -15,6 +15,15 @@ SETUP_PATH=$(dirname "$(current)")
 
 echo "[+] Configuring WeeChat module..."
 
+# Mata sessão anterior se existir
+tmux kill-session -t weechat 2>/dev/null || true
+
+cp -r $HOME/.config/weechat/* $SETUP_PATH/dotenv/config || true
+
+rm -rf $HOME/.config/weechat || true
+
+ln -s $SETUP_PATH/dotenv/config $HOME/.config/weechat || true
+
 # Prompt para todas as senhas/configurações
 prompt_pass "weechat/passphrase" "Weechat Passphrase" "${WEECHAT_PASSPHRASE}"
 prompt_pass "weechat/relay_pass" "Weechat Relay Pass" "${WEECHAT_RELAY_PASS}"
@@ -22,9 +31,6 @@ prompt_pass "weechat/libera_pass" "Weechat Libera Pass" "${WEECHAT_LIBERA_PASS}"
 prompt_pass "weechat/default_nicks" "Weechat Default Nicks" "${WEECHAT_DEFAULT_NICKS}"
 prompt_pass "weechat/default_sasl_user" "Weechat Default SASL User" "${WEECHAT_DEFAULT_SASL_USER}"
 prompt_pass "weechat/log_path" "Weechat Log Path" "${WEECHAT_DEFAULT_LOG_PATH}"
-
-# Mata sessão anterior se existir
-tmux kill-session -t weechat 2>/dev/null || true
 
 # Comandos do WeeChat (string única com separador ;)
 WEECMD=$(

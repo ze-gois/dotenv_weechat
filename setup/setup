@@ -4,6 +4,7 @@
 /set irc.server_default.capabilities "*"
 /set irc.server_default.autojoin_dynamic on
 /server add libera irc.libera.chat/6697 -autoconnect
+/server add oftc irc.oftc.chat/6697 -autoconnect
 /set irc.server.libera.sasl_password ${sec.data.libera_pass}
 /connect -auto
 /set irc.server_default.away_check 5
@@ -620,5 +621,6 @@
 /set weechat.history.max_buffer_lines_number 1024
 /set weechat.buffer.core.weechat.notify 3
 /set weechat.buffer.irc.server.*.notify 3
-/set irc.server.libera.autojoin "##rust,#linux,#ubuntu,#debian,#archlinux,#fedora,#emacs,#ircv3,#libera,#linux,#lua,#perl,#python,##r3m,#regex,#ruby,#rust,#typescript,#vim,#zsh,#weechat,#weechat-dev,#znc"
+/set irc.server.libera.autojoin "#sway,##rust,#linux,#ubuntu,#debian,#archlinux,#fedora,#emacs,#ircv3,#libera,#linux,#lua,#perl,#python,##r3m,#regex,#ruby,#rust,#typescript,#vim,#zsh,#weechat,#weechat-dev,#znc"
+/set irc.server.oftc.autojoin "#virt"
 /save
